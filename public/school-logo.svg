@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" role="img" aria-labelledby="title desc">
+  <title id="title">School Logo</title>
+  <desc id="desc">Placeholder logo for the school.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0%" x2="100%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#f8d36d"/>
+      <stop offset="100%" stop-color="#bf8d2a"/>
+    </linearGradient>
+  </defs>
+  <rect width="200" height="200" rx="26" fill="#0b1f3a"/>
+  <circle cx="100" cy="100" r="76" fill="url(#bg)" opacity="0.96"/>
+  <path d="M100 38 L145 62 L145 92 C145 127 124 148 100 160 C76 148 55 127 55 92 L55 62 Z" fill="#0b1f3a" opacity="0.98"/>
+  <path d="M82 86 L100 68 L118 86 L100 104 Z" fill="#f8d36d"/>
+  <path d="M70 95 H130 V110 H70 Z" fill="#f8d36d"/>
+  <path d="M78 115 H122 V131 H78 Z" fill="#f8d36d"/>
+  <text x="100" y="174" text-anchor="middle" font-size="26" font-family="Arial, sans-serif" font-weight="700" fill="#0b1f3a">PC</text>
+</svg>
