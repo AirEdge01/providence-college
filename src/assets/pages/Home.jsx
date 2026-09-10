@@ -495,8 +495,8 @@ export default function Home() {
             {/* Call to Action */}
             <section style={styles.ctaSection}>
                 <div className="container text-center">
-                    <h2 className="mb-3" style={{ fontWeight: '700' }}>Ready to Begin Your Journey?</h2>
-                    <p className="mb-4" style={{ color: '#E2E8F0', maxWidth: '60ch', marginInline: 'auto' }}>
+                    <h2 className="mb-3" style={{ fontWeight: '700', color: '#F8F2E9' }}>Ready to Begin Your Journey?</h2>
+                    <p className="mb-4" style={{ color: '#F1E7D9', maxWidth: '60ch', marginInline: 'auto' }}>
                         Admissions for the {new Date().getFullYear()}/{new Date().getFullYear() + 1} session are open.
                     </p>
                     <Link to="/admissions" style={styles.btnPrimary}>Apply Now</Link>

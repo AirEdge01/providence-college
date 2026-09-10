@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
+import logoImgSrc from '../provi.png';
 
 export default function Navbar() {
     const [isOpen, setIsOpen] = useState(false);
@@ -184,7 +185,7 @@ export default function Navbar() {
                     {/* Brand with Logo */}
                     <Link to="/" style={styles.brandContainer}>
                         <img
-                            src="/src/assets/provi.png"
+                            src={logoImgSrc}
                             alt="Providence College Logo"
                             style={styles.logoImg}
                             onError={(e) => {
@@ -209,8 +210,9 @@ export default function Navbar() {
                             <li><Link to="/faculties" style={styles.link} className="nav-hover-link">Faculties</Link></li>
                             <li><Link to="/news" style={styles.link} className="nav-hover-link">News</Link></li>
                             <li><Link to="/events" style={styles.link} className="nav-hover-link">Events</Link></li>
-                            <li><Link to="/gallery" style={styles.link} className="nav-hover-link">Gallery</Link></li>
+                            <li><Link to="/faq" style={styles.link} className="nav-hover-link">FAQs</Link></li>
                             <li><Link to="/contact" style={styles.link} className="nav-hover-link">Contact</Link></li>
+                            <li><Link to="/gallery" style={styles.link} className="nav-hover-link">Gallery</Link></li>
                             <li>
                                 <Link to="/admissions" style={styles.applyBtn} className="apply-hover-btn">
                                     Apply Now
@@ -238,6 +240,7 @@ export default function Navbar() {
                         <Link to="/faculties" style={{ ...styles.link, fontSize: '1.1rem' }} className="nav-hover-link">Faculties</Link>
                         <Link to="/news" style={{ ...styles.link, fontSize: '1.1rem' }} className="nav-hover-link">News</Link>
                         <Link to="/events" style={{ ...styles.link, fontSize: '1.1rem' }} className="nav-hover-link">Events</Link>
+                        <Link to="/faq" style={{ ...styles.link, fontSize: '1.1rem' }} className="nav-hover-link">FAQs</Link>
                         <Link to="/contact" style={{ ...styles.link, fontSize: '1.1rem' }} className="nav-hover-link">Contact</Link>
                         <Link to="/gallery" style={{ ...styles.link, fontSize: '1.1rem' }} className="nav-hover-link">Gallery</Link>
                         <Link

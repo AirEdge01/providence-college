@@ -49,7 +49,7 @@ export default function Contact() {
                         <div className="col-md-4">
                             <div className="card h-100 border-0 shadow-sm p-4 rounded-4 bg-light">
                                 <div className="d-flex align-items-center gap-3">
-                                    <span className="fs-2">📍</span>
+                                    <span className="fs-2"></span>
                                     <div>
                                         <h6 className="fw-bold mb-1 text-dark">Campus Address</h6>
                                         <p className="small text-secondary mb-0">{institution.address}</p>
@@ -61,7 +61,7 @@ export default function Contact() {
                         <div className="col-md-4">
                             <div className="card h-100 border-0 shadow-sm p-4 rounded-4 bg-light">
                                 <div className="d-flex align-items-center gap-3">
-                                    <span className="fs-2">📞</span>
+                                    <span className="fs-2"></span>
                                     <div>
                                         <h6 className="fw-bold mb-1 text-dark">Phone Lines</h6>
                                         <p className="small text-secondary mb-0">{institution.phone}</p>
@@ -74,7 +74,7 @@ export default function Contact() {
                         <div className="col-md-4">
                             <div className="card h-100 border-0 shadow-sm p-4 rounded-4 bg-light">
                                 <div className="d-flex align-items-center gap-3">
-                                    <span className="fs-2">✉️</span>
+                                    <span className="fs-2"></span>
                                     <div>
                                         <h6 className="fw-bold mb-1 text-dark">Email Enquiries</h6>
                                         <p className="small text-secondary mb-0">{institution.email}</p>

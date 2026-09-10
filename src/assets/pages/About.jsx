@@ -519,7 +519,7 @@ export default function About() {
                                                         to="/address"
                                                         className="btn btn-sm w-100 fw-bold rounded-2 btn-proprietor-address d-flex align-items-center justify-content-center gap-1"
                                                     >
-                                                        📍 View Proprietor Address
+                                                         View Proprietor Address
                                                     </Link>
                                                 )}
                                             </div>

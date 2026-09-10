@@ -19,7 +19,7 @@ export default function ProprietorsAddress() {
     name: "Prof. Abiodun Gbolagade",
     title: "Proprietor & Chairman of Governing Council",
     qualifications: "Ph.D., F.I.C.A., M.N.I.M.",
-    photo: "https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&w=800&q=80",
+    photo: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQF1sQuyKCbG9avPp876B73xbc_3820YE_s-y9CEzWb2f7QYRNSLCAa7fQ&s21",
     keyQuote: "Education is not merely the transmission of academic knowledge, but the deliberate shaping of character, purpose, and pedagogical mastery.",
     speechParagraphs: [
         "It is with great pleasure and a profound sense of responsibility that I welcome you to this institution through the pages of this Student Handbook. The establishment of this College was driven by a singular, visionary mandate: to build a premier citadel of learning where academic rigor, professional teacher training, and exemplary character development intersect to produce the next generation of educators and societal leaders.",
