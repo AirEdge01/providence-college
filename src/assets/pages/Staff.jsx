@@ -30,7 +30,7 @@ export default function Staff() {
             <PageHeader
                 title="Staff & Leadership"
                 subtitle="Meet the principal officers, academic staff and non-academic staff of Providence College."
-                breadcrumb="Home / Staff"
+                breadcrumb={<><Link to="/" className="text-white text-decoration-none">Home</Link><span className="mx-2">/</span><span>Staff</span></>}
             />
 
             <section className="pce-section pce-bg-white">

@@ -26,7 +26,7 @@ export default function StaffProfile() {
 
     return (
         <>
-            <PageHeader title={staff.name} subtitle={`${staff.role} · ${staff.department}`} breadcrumb="Home / Staff / Profile" />
+            <PageHeader title={staff.name} subtitle={`${staff.role} · ${staff.department}`} breadcrumb={<><Link to="/" className="text-white text-decoration-none">Home</Link><span className="mx-2">/</span><Link to="/staff" className="text-white text-decoration-none">Staff</Link><span className="mx-2">/</span><span>Profile</span></>} />
 
             <section className="pce-section pce-bg-white">
                 <div className="container" style={{ maxWidth: 820 }}>

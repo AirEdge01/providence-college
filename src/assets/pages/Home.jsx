@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import provi1Img from '../provi1.jpg';
+import provi2Img from '../provi2.jpg';
 
 const institution = {
     name: 'Providence International College of Education',
@@ -51,7 +53,7 @@ export default function Home() {
             title: institution.name,
             subtitle: `Established ${institution.established} · Ibadan, Oyo State`,
             text: institution.about,
-            image: 'https://images.unsplash.com/photo-1523050854058-8df90110c9f1?auto=format&fit=crop&w=1400&q=80',
+            image: provi1Img,
             primaryBtnText: 'Apply Now',
             primaryBtnLink: '/admissions',
             secondaryBtnText: 'Learn More',
@@ -61,7 +63,7 @@ export default function Home() {
             title: 'Excellence in Teacher Education',
             subtitle: 'NCCE Accredited Standards',
             text: 'Empowering future educators with practical training, strong character, and modern learning infrastructure.',
-            image: 'https://images.unsplash.com/photo-1524178232363-1fb2b075b655?auto=format&fit=crop&w=1400&q=80',
+            image: provi2Img,
             primaryBtnText: 'Explore Academics',
             primaryBtnLink: '/faculties',
             secondaryBtnText: 'Our Story',
@@ -72,6 +74,7 @@ export default function Home() {
             subtitle: `Session ${new Date().getFullYear()}/${new Date().getFullYear() + 1}`,
             text: 'Take the first step toward a rewarding career in education. Join our vibrant academic community today.',
             image: 'https://images.unsplash.com/photo-1541339907198-e08756dedf3f?auto=format&fit=crop&w=1400&q=80',
+            // image: provi2Img,
             primaryBtnText: 'Start Application',
             primaryBtnLink: '/admissions',
             secondaryBtnText: 'View Events',
@@ -356,7 +359,7 @@ export default function Home() {
                         </div>
                         <div className="col-lg-6">
                             <img
-                                src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQst6Vm38r9_50T3D4l6L098lE7H17RLg38q4TaxtYQtA&s=10"
+                                src={provi1Img}
                                 alt="College Campus"
                                 style={{ ...styles.imageBlock, height: '280px' }}
                             />

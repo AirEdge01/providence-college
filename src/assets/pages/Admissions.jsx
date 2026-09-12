@@ -91,7 +91,7 @@ export default function Admissions() {
             <PageHeader
                 title="Admissions & Entry Pathways"
                 subtitle="Step-by-step guidance on entry requirements, application procedures, and key deadlines for prospective students."
-                breadcrumb="Home / Admissions"
+                breadcrumb={<><Link to="/" className="text-white text-decoration-none">Home</Link><span className="mx-2">/</span><span>Admissions</span></>}
             />
 
             {/* Quick Overview Hero Strip */}

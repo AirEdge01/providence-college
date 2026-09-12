@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
 import PageHeader from '../components/PageHeader.jsx';
 
 const institution = {
@@ -39,7 +40,7 @@ export default function Contact() {
             <PageHeader
                 title="Contact Us"
                 subtitle="Get in touch with Providence International College of Education for admissions, campus visits, or academic enquiries."
-                breadcrumb="Home / Contact"
+                breadcrumb={<><Link to="/" className="text-white text-decoration-none">Home</Link><span className="mx-2">/</span><span>Contact</span></>}
             />
 
             <section className="pce-section pce-bg-white py-5">

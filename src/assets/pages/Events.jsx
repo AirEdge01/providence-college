@@ -14,7 +14,7 @@ export default function Events() {
             <PageHeader
                 title="Events"
                 subtitle="Upcoming ceremonies, fairs and celebrations at Providence College."
-                breadcrumb="Home / Events"
+                breadcrumb={<><Link to="/" className="text-white text-decoration-none">Home</Link><span className="mx-2">/</span><span>Events</span></>}
             />
 
             <section className="pce-section pce-bg-white">

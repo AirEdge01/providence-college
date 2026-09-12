@@ -23,7 +23,7 @@ export default function EventDetails() {
 
     return (
         <>
-            <PageHeader title={event.title} subtitle={`${event.date} · ${event.venue}`} breadcrumb="Home / Events / Details" />
+            <PageHeader title={event.title} subtitle={`${event.date} · ${event.venue}`} breadcrumb={<><Link to="/" className="text-white text-decoration-none">Home</Link><span className="mx-2">/</span><Link to="/events" className="text-white text-decoration-none">Events</Link><span className="mx-2">/</span><span>Details</span></>} />
 
             <section className="pce-section pce-bg-white">
                 <div className="container" style={{ maxWidth: 820 }}>

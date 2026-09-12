@@ -35,7 +35,7 @@ export default function Programmes() {
             <PageHeader
                 title="Programmes"
                 subtitle="Undergraduate NCE programmes, professional development tracks and short courses offered at Providence."
-                breadcrumb="Home / Programmes"
+                breadcrumb={<><Link to="/" className="text-white text-decoration-none">Home</Link><span className="mx-2">/</span><span>Programmes</span></>}
             />
 
             <section className="pce-section pce-bg-white">

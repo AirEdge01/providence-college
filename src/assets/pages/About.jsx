@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import PageHeader from '../components/PageHeader.jsx';
+import provi2Img from '../provi2.jpg';
+
 
 const institution = {
     name: 'Providence International College of Education',
@@ -314,10 +316,20 @@ export default function About() {
                         <div className="col-lg-6">
                             <div className="history-image-wrapper">
                                 <img
-                                    src="https://images.unsplash.com/photo-1562774053-701939374585?auto=format&fit=crop&w=1000&q=80"
+                                    src={provi2Img}
                                     alt={`${institution?.name || 'College'} Campus`}
                                     className="img-fluid rounded-3 shadow-lg position-relative"
-                                    style={{ zIndex: 1, objectFit: 'cover', width: '100%', maxHeight: '420px' }}
+                                    style={{
+                                        zIndex: 1,
+                                        objectFit: 'cover',
+                                        width: '100%',
+                                        maxWidth: '760px',
+                                        height: '380px',
+                                        display: 'block',
+                                        margin: '0 auto',
+                                        borderRadius: ' 16px',
+                                        objectPosition: 'center'
+                                    }}
                                 />
                             </div>
                         </div>
@@ -519,7 +531,7 @@ export default function About() {
                                                         to="/address"
                                                         className="btn btn-sm w-100 fw-bold rounded-2 btn-proprietor-address d-flex align-items-center justify-content-center gap-1"
                                                     >
-                                                         View Proprietor Address
+                                                        View Proprietor Address
                                                     </Link>
                                                 )}
                                             </div>

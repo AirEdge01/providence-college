@@ -168,12 +168,12 @@ export default function FAQ() {
       <PageHeader
         title="Frequently Asked Questions"
         subtitle="Answers to common questions about admissions, programmes, faculties, and campus life."
-        breadcrumb="Home / FAQs"
+        breadcrumb={<><Link to="/" className="text-white text-decoration-none">Home</Link><span className="mx-2">/</span><span>FAQs</span></>}
       />
 
       <section className="pce-section pce-bg-white py-5">
         <div className="container" style={{ maxWidth: '860px' }}>
-          
+
           {/* Search Bar */}
           <div className="mb-4">
             <input
