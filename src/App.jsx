@@ -19,6 +19,7 @@ import Contact from './assets/pages/Contact.jsx';
 import FAQ from './assets/pages/FAQ.jsx';
 import NotFound from './assets/pages/NotFound.jsx';
 import ProprietorsAddress from './assets/pages/ProprietorsAddress.jsx';
+import AdmissionPortal from './assets/pages/AdmissionPortal.jsx';
 
 export default function App() {
   return (
@@ -41,6 +42,7 @@ export default function App() {
           <Route path="/contact" element={<Contact />} />
           <Route path="/faq" element={<FAQ />} />
           <Route path="/address" element={<ProprietorsAddress />} />
+          <Route path="/admission" element={<AdmissionPortal />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </main>

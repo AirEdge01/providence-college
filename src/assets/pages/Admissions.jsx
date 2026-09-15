@@ -243,7 +243,7 @@ export default function Admissions() {
                                 <p className="small text-white-50 mb-4">
                                     Take the first step toward a fulfilling teaching career at Providence International College of Education.
                                 </p>
-                                <a href="#apply" className="btn btn-warning fw-bold text-dark py-2 rounded-3 shadow-sm">
+                                <a href="/admission" className="btn btn-warning fw-bold text-dark py-2 rounded-3 shadow-sm">
                                     Apply Online Now
                                 </a>
                                 <span className="small text-white-50 mt-2 d-block" style={{ fontSize: '0.75rem' }}>
