@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
 import PageHeader from '../components/PageHeader.jsx';
-import admissionCombinations from '../data/admissionCombinations.js';
+import degreeCourses from '../data/degreeCourses.js';
+import { PaymentReceiptPrint, RegistrationSlipPrint } from './AdmissionPortal.jsx';
 
-const NCE_APPLICATION_FEE = 15000;
+const DIRECT_ENTRY_FEE = 40000;
 
-export default function AdmissionPortal() {
+export default function AAUADirectEntryAdmission() {
     const [currentStep, setCurrentStep] = useState(1);
     const [completedSteps, setCompletedSteps] = useState([]);
     const [isSubmitted, setIsSubmitted] = useState(false);
@@ -13,7 +14,7 @@ export default function AdmissionPortal() {
     const [processingPayment, setProcessingPayment] = useState(false);
     const [printTarget, setPrintTarget] = useState('');
 
-    const faculties = Object.keys(admissionCombinations);
+    const schools = Object.keys(degreeCourses);
 
     const [formData, setFormData] = useState({
         firstName: '',
@@ -31,19 +32,18 @@ export default function AdmissionPortal() {
         paymentReference: '',
         paymentDate: '',
 
-        qualification: 'SSCE / WAEC / NECO',
-        schoolName: '',
-        graduationYear: '',
-        jambRegNumber: '',
-        jambScore: '',
+        dePreviousInstitution: '',
+        deQualification: 'NCE',
+        deFinalCGPA: '',
+        dePoints: '',
+        deGraduationYear: '',
 
-        faculty: faculties[0],
-        courseCombination: admissionCombinations[faculties[0]][0],
+        faculty: schools[0],
+        courseCombination: degreeCourses[schools[0]][0],
 
         passportPhoto: null,
-        oLevelCert: null,
-        jambResult: null,
         birthCert: null,
+        deCertificate: null,
         localGovtId: null,
     });
 
@@ -52,7 +52,7 @@ export default function AdmissionPortal() {
         setFormData((prev) => {
             const updated = { ...prev, [name]: value };
             if (name === 'faculty') {
-                updated.courseCombination = admissionCombinations[value][0];
+                updated.courseCombination = degreeCourses[value][0];
             }
             return updated;
         });
@@ -71,7 +71,7 @@ export default function AdmissionPortal() {
         setProcessingPayment(true);
         setErrorMessage('');
         setTimeout(() => {
-            const reference = `PICE${Date.now()}`;
+            const reference = `AAUADE${Date.now()}`;
             setFormData((prev) => ({
                 ...prev,
                 paymentStatus: 'Paid',
@@ -119,26 +119,26 @@ export default function AdmissionPortal() {
 
         if (currentStep === 3) {
             if (
-                !formData.qualification ||
-                !formData.schoolName.trim() ||
-                !formData.graduationYear.trim() ||
-                !formData.jambRegNumber.trim() ||
-                !formData.jambScore
+                !formData.dePreviousInstitution.trim() ||
+                !formData.deQualification ||
+                !formData.deFinalCGPA.trim() ||
+                !formData.dePoints ||
+                !formData.deGraduationYear.trim()
             ) {
-                setErrorMessage('Please fill in all required secondary school and JAMB details.');
+                setErrorMessage('Please complete all Direct Entry prior qualification details, including your final CGPA and points.');
                 return false;
             }
 
-            const score = Number(formData.jambScore);
-            if (score < 150) {
-                setErrorMessage('JAMB score cut off for NCE programmes is 150. Your score is below 150, so you cannot proceed.');
+            const points = Number(formData.dePoints);
+            if (points < 12) {
+                setErrorMessage('A minimum of 12 points is required to apply for Direct Entry. Your entered points do not meet this requirement.');
                 return false;
             }
         }
 
         if (currentStep === 4) {
             if (!formData.faculty || !formData.courseCombination) {
-                setErrorMessage('Please select your School and Course Combination before proceeding.');
+                setErrorMessage('Please complete School and Course of Study before proceeding.');
                 return false;
             }
         }
@@ -165,12 +165,14 @@ export default function AdmissionPortal() {
         e.preventDefault();
 
         if (!formData.passportPhoto) { setErrorMessage('Passport photograph is required before submission.'); return; }
-        if (!formData.oLevelCert) { setErrorMessage("O'Level Result document is required before submission."); return; }
         if (!formData.birthCert) { setErrorMessage('Birth Certificate or Declaration of Age is required.'); return; }
-        if (!formData.jambResult) { setErrorMessage('JAMB Result Slip is mandatory for all applicants.'); return; }
         if (!formData.localGovtId) { setErrorMessage('Local Government Identification document is required.'); return; }
+        if (!formData.deCertificate) {
+            setErrorMessage('You must upload your NCE, ND or HND Certificate or Transcript as evidence of completion.');
+            return;
+        }
 
-        const generatedId = `PICE/NCE/2026/${Math.floor(1000 + Math.random() * 9000)}`;
+        const generatedId = `AAUA/DE/2026/${Math.floor(1000 + Math.random() * 9000)}`;
         setApplicationId(generatedId);
         setCompletedSteps([1, 2, 3, 4, 5]);
         setIsSubmitted(true);
@@ -190,7 +192,7 @@ export default function AdmissionPortal() {
         successText: '#15803D',
     };
 
-    const steps = ['Personal Info', 'Application Fee', 'Academic History', 'School and Combination', 'Uploads and Submit'];
+    const steps = ['Personal Info', 'Application Fee', 'Prior Qualification', 'School and Course', 'Uploads and Submit'];
 
     return (
         <>
@@ -214,19 +216,23 @@ export default function AdmissionPortal() {
           .file-upload-box { border: 2px dashed ${colors.gold}; border-radius: 12px; background-color: ${colors.lightGold}; padding: 1.25rem; text-align: center; transition: all 0.25s ease; }
           .file-upload-box.uploaded { border-color: #10B981; background-color: #F0FDF4; }
           .file-preview-img { width: 90px; height: 90px; object-fit: cover; border-radius: 50%; border: 3px solid ${colors.gold}; margin: 0 auto 0.75rem auto; display: block; }
-          @media print { .no-print-page { display: none !important; } }
+          .print-only { display: none; }
+          @media print {
+            .no-print-page { display: none !important; }
+            .print-only { display: block !important; }
+          }
         `}
             </style>
 
             <div className="no-print-page">
                 <PageHeader
-                    title="NCE Direct Programme Admission Application"
-                    subtitle="Complete every required line item to register your application for the 2026/2027 academic session."
-                    breadcrumb="Home / Admission Portal / NCE Direct Programme"
+                    title="Adekunle Ajasin University of Education, Akungba Degree Programme, Direct Entry"
+                    
+                    subtitle="Sandwich Degree Programme, in affiliation with Providence International College of Education, for candidates entering at 200L with a prior NCE, ND or HND qualification. Complete every required line item to register your application for the 2026/2027 academic session."
+                    breadcrumb="Home / Admission Portal / AAUA Degree Programme / Direct Entry"
                 />
-
                 <section className="pce-section pce-bg-white py-5">
-                    <div className="container" style={{ maxWidth: '1000px' }}>
+                    <div className="container" style={{ maxWidth: '1000px', }}>
 
                         <div
                             className="p-4 mb-4 rounded-4 d-flex align-items-center justify-content-between flex-wrap gap-3"
@@ -234,15 +240,16 @@ export default function AdmissionPortal() {
                         >
                             <div>
                                 <h5 style={{ fontWeight: 800, color: colors.gold, margin: 0 }}>
-                                    2026/2027 NCE Direct Programme Application
+                                    2026/2027 AAUA Sandwich Degree Programme, Direct Entry Application
                                 </h5>
-                                <p style={{ margin: '0.25rem 0 0 0', fontSize: '0.95rem', color: '#F1F5F9', fontWeight: 500 }}>
-                                    All lines in each section must be completed before advancing to the next section.
+                                <p style={{ margin: '0.35rem 0 0 0', fontSize: '0.95rem', color: '#F1F5F9', fontWeight: 500, lineHeight: 1.6 }}>
+                                    Adekunle Ajasin University of Education, Akungba, in affiliation with Providence International College of Education.
+                                    Academic structure runs on Contact Sessions rather than standard semesters. Direct Entry candidates begin at 200L.
                                 </p>
                             </div>
                             <div>
                                 <span className="badge bg-warning text-dark px-3 py-2 fw-bold">
-                                    JAMB Cut off: 150
+                                    Minimum Requirement: 12 Points
                                 </span>
                             </div>
                         </div>
@@ -310,11 +317,11 @@ export default function AdmissionPortal() {
                                                 </div>
                                                 <div className="col-md-3">
                                                     <label className="form-label-custom">State of Origin *</label>
-                                                    <input type="text" name="stateOfOrigin" className="form-input-custom" placeholder="e.g. Oyo State" value={formData.stateOfOrigin} onChange={handleInputChange} />
+                                                    <input type="text" name="stateOfOrigin" className="form-input-custom" placeholder="e.g. Ondo State" value={formData.stateOfOrigin} onChange={handleInputChange} />
                                                 </div>
                                                 <div className="col-md-3">
                                                     <label className="form-label-custom">Local Government Area *</label>
-                                                    <input type="text" name="localGovernment" className="form-input-custom" placeholder="e.g. Ibadan North" value={formData.localGovernment} onChange={handleInputChange} />
+                                                    <input type="text" name="localGovernment" className="form-input-custom" placeholder="e.g. Akoko South West" value={formData.localGovernment} onChange={handleInputChange} />
                                                 </div>
                                                 <div className="col-12">
                                                     <label className="form-label-custom">Residential Address *</label>
@@ -329,25 +336,25 @@ export default function AdmissionPortal() {
                                             <h4 className="mb-4" style={{ color: colors.navy, fontWeight: 800 }}>Step 2: Application Fee Payment</h4>
                                             <div className="p-4 rounded-3 mb-4" style={{ backgroundColor: colors.bgLight, border: `1px solid ${colors.border}` }}>
                                                 <div className="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3">
-                                                    <span style={{ color: colors.textMuted, fontSize: 14 }}>NCE Direct Programme Application Fee</span>
+                                                    <span style={{ color: colors.textMuted, fontSize: 14 }}>Direct Entry Application Fee</span>
                                                     <span style={{ color: colors.navy, fontWeight: 800, fontSize: 22 }}>
-                                                        ₦{NCE_APPLICATION_FEE.toLocaleString()}
+                                                        ₦{DIRECT_ENTRY_FEE.toLocaleString()}
                                                     </span>
                                                 </div>
 
                                                 {formData.paymentStatus === 'Paid' ? (
-                                                    <>
+                                                    <div>
                                                         <div
                                                             className="p-3 rounded-3 d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3"
-                                                            style={{ backgroundColor: colors.successBg, color: colors.successText, fontWeight: 600 }}
+                                                            style={{ backgroundColor: colors.successBg, color: colors.successText, fontWeight: 700, border: `1px solid #10B981` }}
                                                         >
-                                                            <span>Payment received</span>
+                                                            <span>Payment Confirmed</span>
                                                             <span style={{ fontFamily: 'monospace' }}>{formData.paymentReference}</span>
                                                         </div>
                                                         <button type="button" className="btn-outline-navy" onClick={handlePrintReceipt} style={{ width: '100%' }}>
                                                             Print Payment Receipt
                                                         </button>
-                                                    </>
+                                                    </div>
                                                 ) : (
                                                     <button
                                                         type="button"
@@ -356,7 +363,7 @@ export default function AdmissionPortal() {
                                                         disabled={processingPayment}
                                                         style={{ width: '100%' }}
                                                     >
-                                                        {processingPayment ? 'Processing payment' : `Pay ₦${NCE_APPLICATION_FEE.toLocaleString()} Now`}
+                                                        {processingPayment ? 'Processing payment' : `Pay ₦${DIRECT_ENTRY_FEE.toLocaleString()} Now`}
                                                     </button>
                                                 )}
                                             </div>
@@ -368,32 +375,37 @@ export default function AdmissionPortal() {
 
                                     {currentStep === 3 && (
                                         <div>
-                                            <h4 className="mb-4" style={{ color: colors.navy, fontWeight: 800 }}>Step 3: Academic Background and JAMB Details</h4>
-                                            <div className="row g-3">
-                                                <div className="col-md-6">
-                                                    <label className="form-label-custom">O'Level Qualification *</label>
-                                                    <select name="qualification" className="form-input-custom" value={formData.qualification} onChange={handleInputChange}>
-                                                        <option value="SSCE / WAEC / NECO">SSCE / WAEC / NECO</option>
-                                                        <option value="NABTEB">NABTEB</option>
-                                                        <option value="GCE A Level">GCE A Level</option>
-                                                    </select>
-                                                </div>
-                                                <div className="col-md-6">
-                                                    <label className="form-label-custom">Secondary School Attended *</label>
-                                                    <input type="text" name="schoolName" className="form-input-custom" placeholder="e.g. Government College Ibadan" value={formData.schoolName} onChange={handleInputChange} />
-                                                </div>
-                                                <div className="col-md-4">
-                                                    <label className="form-label-custom">Graduation Year *</label>
-                                                    <input type="number" name="graduationYear" className="form-input-custom" placeholder="e.g. 2024" value={formData.graduationYear} onChange={handleInputChange} />
-                                                </div>
-                                                <div className="col-md-4">
-                                                    <label className="form-label-custom">UTME / JAMB Reg Number *</label>
-                                                    <input type="text" name="jambRegNumber" className="form-input-custom" placeholder="202612345678AB" value={formData.jambRegNumber} onChange={handleInputChange} />
-                                                </div>
-                                                <div className="col-md-4">
-                                                    <label className="form-label-custom">JAMB Score *</label>
-                                                    <input type="number" name="jambScore" className="form-input-custom" placeholder="Min: 150" value={formData.jambScore} onChange={handleInputChange} />
-                                                    <span className="small text-muted d-block mt-1">Required cut off: <strong>150</strong></span>
+                                            <h4 className="mb-4" style={{ color: colors.navy, fontWeight: 800 }}>Step 3: Direct Entry Qualification Details</h4>
+                                            <div className="p-3 p-md-4 rounded-3 border" style={{ backgroundColor: colors.lightGold }}>
+                                                <p className="small mb-3" style={{ color: colors.textMuted }}>
+                                                    Direct Entry applicants must have completed a Nigeria Certificate in Education, National Diploma or Higher National Diploma, with a minimum of 12 points, before applying.
+                                                </p>
+                                                <div className="row g-3">
+                                                    <div className="col-md-6">
+                                                        <label className="form-label-custom">Previous Institution Attended *</label>
+                                                        <input type="text" name="dePreviousInstitution" className="form-input-custom" placeholder="e.g. Providence International College of Education" value={formData.dePreviousInstitution} onChange={handleInputChange} />
+                                                    </div>
+                                                    <div className="col-md-6">
+                                                        <label className="form-label-custom">Qualification Obtained *</label>
+                                                        <select name="deQualification" className="form-input-custom" value={formData.deQualification} onChange={handleInputChange}>
+                                                            <option value="NCE">NCE National Certificate in Education</option>
+                                                            <option value="ND">ND National Diploma</option>
+                                                            <option value="HND">HND Higher National Diploma</option>
+                                                        </select>
+                                                    </div>
+                                                    <div className="col-md-4">
+                                                        <label className="form-label-custom">Final CGPA *</label>
+                                                        <input type="text" name="deFinalCGPA" className="form-input-custom" placeholder="e.g. 3.40" value={formData.deFinalCGPA} onChange={handleInputChange} />
+                                                    </div>
+                                                    <div className="col-md-4">
+                                                        <label className="form-label-custom">Points Obtained *</label>
+                                                        <input type="number" name="dePoints" className="form-input-custom" placeholder="Min: 12" value={formData.dePoints} onChange={handleInputChange} />
+                                                        <span className="small text-muted d-block mt-1">Required minimum: <strong>12 points</strong></span>
+                                                    </div>
+                                                    <div className="col-md-4">
+                                                        <label className="form-label-custom">Year of Graduation *</label>
+                                                        <input type="number" name="deGraduationYear" className="form-input-custom" placeholder="e.g. 2025" value={formData.deGraduationYear} onChange={handleInputChange} />
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
@@ -401,19 +413,25 @@ export default function AdmissionPortal() {
 
                                     {currentStep === 4 && (
                                         <div>
-                                            <h4 className="mb-4" style={{ color: colors.navy, fontWeight: 800 }}>Step 4: School and Course Combination</h4>
+                                            <h4 className="mb-4" style={{ color: colors.navy, fontWeight: 800 }}>Step 4: School and Course of Study</h4>
                                             <div className="row g-3">
                                                 <div className="col-md-6">
                                                     <label className="form-label-custom">School / Faculty *</label>
                                                     <select name="faculty" className="form-input-custom" value={formData.faculty} onChange={handleInputChange}>
-                                                        {faculties.map((f) => <option key={f} value={f}>{f}</option>)}
+                                                        {schools.map((f) => <option key={f} value={f}>{f}</option>)}
                                                     </select>
                                                 </div>
                                                 <div className="col-md-6">
-                                                    <label className="form-label-custom">Course Combination *</label>
+                                                    <label className="form-label-custom">Course of Study *</label>
                                                     <select name="courseCombination" className="form-input-custom" value={formData.courseCombination} onChange={handleInputChange}>
-                                                        {admissionCombinations[formData.faculty].map((c) => <option key={c} value={c}>{c}</option>)}
+                                                        {degreeCourses[formData.faculty].map((c) => <option key={c} value={c}>{c}</option>)}
                                                     </select>
+                                                </div>
+                                                <div className="col-12">
+                                                    <div className="p-3 rounded-3" style={{ background: colors.bgLight, fontSize: 13.5, color: colors.textMuted }}>
+                                                        Direct Entry candidates begin at 200L and progress from 200L to 300L to 400L to 500L.
+                                                        Each student studies one course, for example Biology Education or Physics Education, and does not combine two subjects.
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
@@ -432,19 +450,9 @@ export default function AdmissionPortal() {
                                                         )}
                                                         <h6 style={{ color: colors.navy, fontWeight: 700 }}>Passport Photograph *</h6>
                                                         <p className="small text-muted mb-2">Clear red or white background, max 2MB</p>
-                                                        <input type="file" name="passportPhoto" accept="image/*" onChange={handleFileChange} style={{ display: 'none' }} id="passport-upload" />
-                                                        <label htmlFor="passport-upload" className="btn btn-sm btn-outline-dark">
+                                                        <input type="file" name="passportPhoto" accept="image/*" onChange={handleFileChange} style={{ display: 'none' }} id="passport-upload-aaua-de" />
+                                                        <label htmlFor="passport-upload-aaua-de" className="btn btn-sm btn-outline-dark">
                                                             {formData.passportPhoto ? `Uploaded: ${formData.passportPhoto.name}` : 'Upload Passport'}
-                                                        </label>
-                                                    </div>
-                                                </div>
-                                                <div className="col-md-6">
-                                                    <div className={`file-upload-box ${formData.oLevelCert ? 'uploaded' : ''}`}>
-                                                        <h6 style={{ color: colors.navy, fontWeight: 700 }}>O'Level Result WAEC/NECO *</h6>
-                                                        <p className="small text-muted mb-2">PDF or JPEG format, max 5MB</p>
-                                                        <input type="file" name="oLevelCert" accept=".pdf,image/*" onChange={handleFileChange} style={{ display: 'none' }} id="olevel-upload" />
-                                                        <label htmlFor="olevel-upload" className="btn btn-sm btn-outline-dark">
-                                                            {formData.oLevelCert ? `Uploaded: ${formData.oLevelCert.name}` : 'Upload Result'}
                                                         </label>
                                                     </div>
                                                 </div>
@@ -452,31 +460,33 @@ export default function AdmissionPortal() {
                                                     <div className={`file-upload-box ${formData.birthCert ? 'uploaded' : ''}`}>
                                                         <h6 style={{ color: colors.navy, fontWeight: 700 }}>Birth Certificate or Declaration *</h6>
                                                         <p className="small text-muted mb-2">PDF or JPEG format, max 5MB</p>
-                                                        <input type="file" name="birthCert" accept=".pdf,image/*" onChange={handleFileChange} style={{ display: 'none' }} id="birth-upload" />
-                                                        <label htmlFor="birth-upload" className="btn btn-sm btn-outline-dark">
+                                                        <input type="file" name="birthCert" accept=".pdf,image/*" onChange={handleFileChange} style={{ display: 'none' }} id="birth-upload-aaua-de" />
+                                                        <label htmlFor="birth-upload-aaua-de" className="btn btn-sm btn-outline-dark">
                                                             {formData.birthCert ? `Uploaded: ${formData.birthCert.name}` : 'Upload Birth Certificate'}
                                                         </label>
                                                     </div>
                                                 </div>
                                                 <div className="col-md-6">
-                                                    <div className={`file-upload-box ${formData.jambResult ? 'uploaded' : ''}`}>
-                                                        <h6 style={{ color: colors.navy, fontWeight: 700 }}>JAMB Official Result Slip *</h6>
-                                                        <p className="small text-muted mb-2">PDF or JPEG format, max 5MB</p>
-                                                        <input type="file" name="jambResult" accept=".pdf,image/*" onChange={handleFileChange} style={{ display: 'none' }} id="jamb-upload" />
-                                                        <label htmlFor="jamb-upload" className="btn btn-sm btn-outline-dark">
-                                                            {formData.jambResult ? `Uploaded: ${formData.jambResult.name}` : 'Upload JAMB Result'}
-                                                        </label>
-                                                    </div>
-                                                </div>
-                                                <div className="col-md-12">
                                                     <div className={`file-upload-box ${formData.localGovtId ? 'uploaded' : ''}`}>
                                                         <h6 style={{ color: colors.navy, fontWeight: 700 }}>Local Government Identification *</h6>
                                                         <p className="small text-muted mb-2">
                                                             A Local Government Identification letter or certificate confirming your Local Government Area. PDF or JPEG format, max 5MB.
                                                         </p>
-                                                        <input type="file" name="localGovtId" accept=".pdf,image/*" onChange={handleFileChange} style={{ display: 'none' }} id="lg-upload" />
-                                                        <label htmlFor="lg-upload" className="btn btn-sm btn-outline-dark">
+                                                        <input type="file" name="localGovtId" accept=".pdf,image/*" onChange={handleFileChange} style={{ display: 'none' }} id="lg-upload-aaua-de" />
+                                                        <label htmlFor="lg-upload-aaua-de" className="btn btn-sm btn-outline-dark">
                                                             {formData.localGovtId ? `Uploaded: ${formData.localGovtId.name}` : 'Upload Local Government ID'}
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                                <div className="col-md-6">
+                                                    <div className={`file-upload-box ${formData.deCertificate ? 'uploaded' : ''}`}>
+                                                        <h6 style={{ color: colors.navy, fontWeight: 700 }}>NCE, ND or HND Certificate or Transcript *</h6>
+                                                        <p className="small text-muted mb-2">
+                                                            Evidence of completion from a College of Education, Polytechnic, or equivalent institution, showing your final CGPA and points. PDF or JPEG format, max 5MB.
+                                                        </p>
+                                                        <input type="file" name="deCertificate" accept=".pdf,image/*" onChange={handleFileChange} style={{ display: 'none' }} id="de-cert-upload-aaua" />
+                                                        <label htmlFor="de-cert-upload-aaua" className="btn btn-sm btn-outline-dark">
+                                                            {formData.deCertificate ? `Uploaded: ${formData.deCertificate.name}` : 'Upload Certificate or Transcript'}
                                                         </label>
                                                     </div>
                                                 </div>
@@ -502,7 +512,7 @@ export default function AdmissionPortal() {
                             <div className="admission-card p-5 text-center">
                                 <h3 style={{ color: colors.navy, fontWeight: 800 }}>Application Submitted Successfully</h3>
                                 <p className="text-muted mb-3" style={{ maxWidth: '600px', margin: '0 auto' }}>
-                                    Thank you, <strong>{formData.firstName} {formData.lastName}</strong>. Your application under the NCE Direct Programme has been received.
+                                    Thank you, <strong>{formData.firstName} {formData.lastName}</strong>. Your Direct Entry application under the AAUA Degree Programme, in affiliation with Providence International College of Education, has been received.
                                 </p>
                                 <p className="text-muted mb-4" style={{ maxWidth: '600px', margin: '0 auto', fontWeight: 600 }}>
                                     Your admission decision will be sent to your registered email address, {formData.email}, once processing is complete.
@@ -521,128 +531,30 @@ export default function AdmissionPortal() {
                 </section>
             </div>
 
-            {printTarget === 'receipt' && (
-                <PaymentReceiptPrint
-                    schoolName="Providence International College of Education"
-                    programme="NCE Direct Programme"
-                    applicantName={`${formData.firstName} ${formData.middleName} ${formData.lastName}`.replace(/\s+/g, ' ').trim()}
-                    email={formData.email}
-                    phone={formData.phone}
-                    amount={NCE_APPLICATION_FEE}
-                    reference={formData.paymentReference}
-                    date={formData.paymentDate}
-                />
-            )}
+            <div className="print-only">
+                {printTarget === 'receipt' && (
+                    <PaymentReceiptPrint
+                        schoolName="Providence International College of Education"
+                        programme="AAUA Degree Programme, Direct Entry"
+                        applicantName={`${formData.firstName} ${formData.middleName} ${formData.lastName}`.replace(/\s+/g, ' ').trim()}
+                        email={formData.email}
+                        phone={formData.phone}
+                        amount={DIRECT_ENTRY_FEE}
+                        reference={formData.paymentReference}
+                        date={formData.paymentDate}
+                    />
+                )}
 
-            {printTarget === 'slip' && isSubmitted && (
-                <RegistrationSlipPrint
-                    schoolName="Providence International College of Education"
-                    programme="NCE Direct Programme"
-                    applicationId={applicationId}
-                    formData={formData}
-                    entryLabel="Direct Programme Applicant"
-                />
-            )}
+                {printTarget === 'slip' && isSubmitted && (
+                    <RegistrationSlipPrint
+                        schoolName="Providence International College of Education"
+                        programme="Adekunle Ajasin University of Education Degree Programme"
+                        applicationId={applicationId}
+                        formData={formData}
+                        entryLabel="Direct Entry Applicant"
+                    />
+                )}
+            </div>
         </>
-    );
-}
-
-export function PaymentReceiptPrint({ schoolName, programme, applicantName, email, phone, amount, reference, date }) {
-    return (
-        <div style={{ padding: 40, fontFamily: 'Georgia, serif', color: '#111', maxWidth: 650, margin: '0 auto' }}>
-            <div style={{ textAlign: 'center', borderBottom: '3px double #0F2C59', paddingBottom: 16, marginBottom: 24 }}>
-                <h2 style={{ color: '#0F2C59', fontWeight: 800, marginBottom: 4 }}>{schoolName}</h2>
-                <p style={{ fontSize: 13, letterSpacing: 2, textTransform: 'uppercase', color: '#555', margin: 0 }}>Official Payment Receipt</p>
-            </div>
-
-            <table style={{ width: '100%', fontSize: 14, marginBottom: 24 }}>
-                <tbody>
-                    <tr><td style={{ padding: '6px 0', fontWeight: 700, width: '40%' }}>Programme</td><td>{programme}</td></tr>
-                    <tr><td style={{ padding: '6px 0', fontWeight: 700 }}>Applicant Name</td><td>{applicantName}</td></tr>
-                    <tr><td style={{ padding: '6px 0', fontWeight: 700 }}>Email Address</td><td>{email}</td></tr>
-                    <tr><td style={{ padding: '6px 0', fontWeight: 700 }}>Phone Number</td><td>{phone}</td></tr>
-                    <tr><td style={{ padding: '6px 0', fontWeight: 700 }}>Payment Reference</td><td style={{ fontFamily: 'monospace' }}>{reference}</td></tr>
-                    <tr><td style={{ padding: '6px 0', fontWeight: 700 }}>Date of Payment</td><td>{date}</td></tr>
-                </tbody>
-            </table>
-
-            <div style={{ border: '2px solid #0F2C59', borderRadius: 6, padding: '16px 20px', textAlign: 'center', marginBottom: 30 }}>
-                <div style={{ fontSize: 13, color: '#555', marginBottom: 4 }}>Amount Paid</div>
-                <div style={{ fontSize: 28, fontWeight: 800, color: '#0F2C59' }}>₦{amount.toLocaleString()}</div>
-            </div>
-
-            <p style={{ fontSize: 12.5, color: '#555', lineHeight: 1.6 }}>
-                This receipt confirms payment of the application fee stated above. It should be retained for your records and presented if requested during the admission process.
-            </p>
-
-            <div style={{ marginTop: 50, borderTop: '1px solid #999', paddingTop: 10, fontSize: 12, color: '#777', textAlign: 'center' }}>
-                Generated by the {schoolName} Admission Portal
-            </div>
-        </div>
-    );
-}
-
-export function RegistrationSlipPrint({ schoolName, programme, applicationId, formData, entryLabel }) {
-    return (
-        <div style={{ padding: 30, fontFamily: 'Georgia, serif', color: '#111', maxWidth: 750, margin: '0 auto', border: '3px double #0F2C59' }}>
-            <div style={{ textAlign: 'center', borderBottom: '2px solid #0F2C59', paddingBottom: 14, marginBottom: 20, padding: 20 }}>
-                <h2 style={{ color: '#0F2C59', fontWeight: 800, marginBottom: 4, letterSpacing: 1 }}>{schoolName}</h2>
-                <p style={{ fontSize: 13, letterSpacing: 2, textTransform: 'uppercase', color: '#555', margin: 0 }}>
-                    2026/2027 Academic Session Registration Slip
-                </p>
-                <div style={{ marginTop: 10, display: 'inline-block', background: '#0F2C59', color: '#D4AF37', padding: '5px 20px', borderRadius: 4, fontWeight: 700, fontSize: 13 }}>
-                    {entryLabel}
-                </div>
-            </div>
-
-            <div style={{ display: 'flex', gap: 24, padding: '0 24px 20px' }}>
-                <div style={{ flex: 1 }}>
-                    <table style={{ width: '100%', fontSize: 13.5 }}>
-                        <tbody>
-                            <tr><td style={{ padding: '5px 0', fontWeight: 700, width: '45%' }}>Full Name</td><td>{formData.lastName} {formData.firstName} {formData.middleName}</td></tr>
-                            <tr><td style={{ padding: '5px 0', fontWeight: 700 }}>Application Number</td><td style={{ fontFamily: 'monospace' }}>{applicationId}</td></tr>
-                            <tr><td style={{ padding: '5px 0', fontWeight: 700 }}>Programme</td><td>{programme}</td></tr>
-                            <tr><td style={{ padding: '5px 0', fontWeight: 700 }}>Course of Study</td><td>{formData.courseCombination}</td></tr>
-                            <tr><td style={{ padding: '5px 0', fontWeight: 700 }}>School / Faculty</td><td>{formData.faculty}</td></tr>
-                            <tr><td style={{ padding: '5px 0', fontWeight: 700 }}>Date of Birth</td><td>{formData.dob}</td></tr>
-                            <tr><td style={{ padding: '5px 0', fontWeight: 700 }}>Gender</td><td>{formData.gender}</td></tr>
-                            <tr><td style={{ padding: '5px 0', fontWeight: 700 }}>State of Origin</td><td>{formData.stateOfOrigin}</td></tr>
-                            <tr><td style={{ padding: '5px 0', fontWeight: 700 }}>Local Government Area</td><td>{formData.localGovernment}</td></tr>
-                            <tr><td style={{ padding: '5px 0', fontWeight: 700 }}>Email Address</td><td>{formData.email}</td></tr>
-                            <tr><td style={{ padding: '5px 0', fontWeight: 700 }}>Phone Number</td><td>{formData.phone}</td></tr>
-                            <tr><td style={{ padding: '5px 0', fontWeight: 700 }}>JAMB Reg Number</td><td>{formData.jambRegNumber}</td></tr>
-                            <tr><td style={{ padding: '5px 0', fontWeight: 700 }}>JAMB Score</td><td>{formData.jambScore}</td></tr>
-                            <tr><td style={{ padding: '5px 0', fontWeight: 700 }}>Payment Reference</td><td style={{ fontFamily: 'monospace' }}>{formData.paymentReference}</td></tr>
-                        </tbody>
-                    </table>
-                </div>
-                <div style={{ width: 130, textAlign: 'center' }}>
-                    {formData.passportPhoto ? (
-                        <img
-                            src={URL.createObjectURL(formData.passportPhoto)}
-                            alt="Applicant"
-                            style={{ width: 120, height: 130, objectFit: 'cover', border: '2px solid #0F2C59' }}
-                        />
-                    ) : (
-                        <div style={{ width: 120, height: 130, border: '2px dashed #999', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 11, color: '#999' }}>
-                            Passport Photo
-                        </div>
-                    )}
-                </div>
-            </div>
-
-            <div style={{ padding: '0 24px 20px' }}>
-                <p style={{ fontSize: 12.5, color: '#444', lineHeight: 1.7, borderTop: '1px solid #ccc', paddingTop: 14 }}>
-                    This slip confirms that the applicant named above has successfully completed and submitted an admission application to {schoolName}
-                    for the 2026/2027 academic session. This is not an admission letter. Applicants will be notified of their admission status by email
-                    at the address provided above once processing has been completed by the Admissions Office.
-                </p>
-            </div>
-
-            <div style={{ display: 'flex', justifyContent: 'space-between', padding: '20px 24px 30px', fontSize: 12.5 }}>
-                <div style={{ borderTop: '1px solid #000', width: 180, textAlign: 'center', paddingTop: 4 }}>Applicant Signature</div>
-                <div style={{ borderTop: '1px solid #000', width: 180, textAlign: 'center', paddingTop: 4 }}>Admissions Office</div>
-            </div>
-        </div>
     );
 }

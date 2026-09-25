@@ -20,6 +20,9 @@ import FAQ from './assets/pages/FAQ.jsx';
 import NotFound from './assets/pages/NotFound.jsx';
 import ProprietorsAddress from './assets/pages/ProprietorsAddress.jsx';
 import AdmissionPortal from './assets/pages/AdmissionPortal.jsx';
+import AdmissionLanding from './assets/pages/AdmissionLanding.jsx';
+import AAUADegreeAdmission from './assets/pages/AAUADegreeAdmission.jsx';
+import AAUADirectEntryAdmission from './assets/pages/AAUADirectEntryAdmission.jsx';
 
 export default function App() {
   return (
@@ -43,6 +46,9 @@ export default function App() {
           <Route path="/faq" element={<FAQ />} />
           <Route path="/address" element={<ProprietorsAddress />} />
           <Route path="/admission" element={<AdmissionPortal />} />
+          <Route path="/admission/landing" element={<AdmissionLanding />} />
+          <Route path="/admission/aaua" element={<AAUADegreeAdmission />} />
+          <Route path="/admission/aaua-direct" element={<AAUADirectEntryAdmission />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </main>

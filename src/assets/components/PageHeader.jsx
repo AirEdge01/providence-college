@@ -1,41 +1,28 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
+import React from "react";
 
-export default function PageHeader({ title, subtitle, breadcrumb }) {
-  const renderBreadcrumb = () => {
-    if (!breadcrumb) return null;
+const navy = "#0F2C59";
+const gold = "#D4AF37";
 
-    if (typeof breadcrumb === 'string') {
-      const parts = breadcrumb.split('/').map((part) => part.trim()).filter(Boolean);
-
-      if (parts.length === 0) return null;
-
-      return (
-        <div className="breadcrumb-text mb-2">
-          {parts.map((part, index) => (
-            <React.Fragment key={`${part}-${index}`}>
-              {index === 0 ? (
-                <Link to="/" style={{ color: '#D4AF37', textDecoration: 'none' }}>{part}</Link>
-              ) : (
-                <span>{part}</span>
-              )}
-              {index < parts.length - 1 && <span> / </span>}
-            </React.Fragment>
-          ))}
-        </div>
-      );
-    }
-
-    return <div className="breadcrumb-text mb-2">{breadcrumb}</div>;
-  };
-
+export default function PageHeader({ title, subtitle, breadcrumb, titleColor = "#FFFFFF" }) {
   return (
-    <div className="pce-page-header">
-      <div className="container">
-        {renderBreadcrumb()}
-        <h1>{title}</h1>
-        {subtitle && <p className="mb-0" style={{ color: '#C9D5EA', maxWidth: '65ch' }}>{subtitle}</p>}
-      </div>
+    <div
+      style={{
+        background: `linear-gradient(120deg, ${navy}, #163a73)`,
+        color: "#fff",
+        padding: "50px 20px",
+        textAlign: "center",
+      }}
+    >
+      {breadcrumb && (
+        <div style={{ fontSize: 13, opacity: 0.7, marginBottom: 10, textTransform: "uppercase", letterSpacing: 1 }}>
+          {breadcrumb}
+        </div>
+      )}
+      <h2 style={{ fontWeight: 800, marginBottom: 8, color: titleColor }}>{title}</h2>
+      {subtitle && (
+        <p style={{ maxWidth: 650, margin: "0 auto", opacity: 0.85, fontSize: 15 }}>{subtitle}</p>
+      )}
+      <div style={{ width: 60, height: 4, background: gold, margin: "18px auto 0", borderRadius: 4 }} />
     </div>
   );
 }
