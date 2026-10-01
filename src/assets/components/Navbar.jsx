@@ -82,7 +82,7 @@ export default function Navbar() {
                 <div style={{ position: 'fixed', top: '65px', left: 0, right: 0, bottom: 0, background: 'rgba(15,44,89,0.98)', padding: '1.5rem', display: 'flex', flexDirection: 'column', gap: '1rem', zIndex: 999 }}>
                     <Link to="/" className="nav-link">Home</Link>
                     <Link to="/about" className="nav-link">About</Link>
-                    <Link to="/faculties" className="nav-link">Faculties</Link>
+                    <Link to="/faculties" className="nav-link">Schools</Link>
                     
                     <div>
                         <div onClick={() => setPortalOpen(!portalOpen)} className="nav-link" style={{ display: 'flex', justifyContent: 'space-between', cursor: 'pointer' }}>
