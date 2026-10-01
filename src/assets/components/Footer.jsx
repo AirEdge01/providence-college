@@ -6,7 +6,7 @@ const institution = {
     name: 'Providence International College of Education',
     shortName: 'Providence International College of Education',
     address: 'No. 1, Adeojo, Boluwaji, Lagos-Ibadan Expressway, Ibadan, Oyo State, Nigeria',
-    phone: '+234 903 542 7526',
+    phone: '+234 800000000',
     email: 'info@providencecollege.edu.ng',
     motto: 'Empowering Minds. Transforming Futures.',
     social: {
@@ -56,7 +56,7 @@ export default function Footer() {
                         <h5>Explore</h5>
                         <ul className="list-unstyled small">
                             <li className="mb-2"><Link to="/about">About Us</Link></li>
-                            <li className="mb-2"><Link to="/faculties">Faculties</Link></li>
+                            <li className="mb-2"><Link to="/faculties">schools</Link></li>
                             <li className="mb-2"><Link to="/programmes">Programmes</Link></li>
                             <li className="mb-2"><Link to="/admissions">Admissions</Link></li>
                             <li className="mb-2"><Link to="/address">Proprietor Address</Link></li>

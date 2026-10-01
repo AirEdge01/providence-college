@@ -561,7 +561,7 @@ export default function About() {
 
                                 {/* Admission / Application Link */}
                                 <Link
-                                    to="/apply"
+                                    to="/admissions"
                                     className="btn px-4 py-2 fw-bold"
                                     style={{ backgroundColor: COLORS.gold, color: COLORS.navy, borderRadius: '6px' }}
                                 >

@@ -4,255 +4,107 @@ import logoImgSrc from '../provi.png';
 
 export default function Navbar() {
     const [isOpen, setIsOpen] = useState(false);
+    const [portalOpen, setPortalOpen] = useState(false);
     const location = useLocation();
 
-    // Close mobile menu on route change
     useEffect(() => {
         setIsOpen(false);
+        setPortalOpen(false);
     }, [location.pathname]);
 
-    // Prevent background scrolling when mobile overlay is open
     useEffect(() => {
-        if (isOpen) {
-            document.body.style.overflow = 'hidden';
-        } else {
-            document.body.style.overflow = 'unset';
-        }
-        return () => {
-            document.body.style.overflow = 'unset';
-        };
+        document.body.style.overflow = isOpen ? 'hidden' : 'unset';
+        return () => { document.body.style.overflow = 'unset'; };
     }, [isOpen]);
 
-    const colors = {
-        navy: '#0F2C59',
-        gold: '#D4AF37',
-        white: '#FFFFFF',
-        overlayBg: 'rgba(15, 44, 89, 0.98)'
-    };
-
-    const styles = {
-        navbar: {
-            backgroundColor: colors.navy,
-            borderBottom: `3px solid ${colors.gold}`,
-            position: 'sticky',
-            top: 0,
-            zIndex: 1000,
-            padding: '0.6rem 1rem',
-            boxShadow: '0 4px 20px rgba(0, 0, 0, 0.15)'
-        },
-        navContainer: {
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            maxWidth: '1200px',
-            margin: '0 auto',
-            width: '100%'
-        },
-        brandContainer: {
-            display: 'flex',
-            alignItems: 'center',
-            gap: '0.75rem',
-            textDecoration: 'none'
-        },
-        logoImg: {
-            height: '45px',
-            width: 'auto',
-            objectFit: 'contain'
-        },
-        logoPlaceholder: {
-            height: '45px',
-            width: '45px',
-            borderRadius: '50%',
-            backgroundColor: colors.gold,
-            color: colors.navy,
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            fontWeight: '800',
-            fontSize: '1.1rem',
-            border: `2px solid ${colors.white}`
-        },
-        brandText: {
-            color: colors.white,
-            fontWeight: '800',
-            fontSize: '1.2rem',
-            lineHeight: '1.2'
-        },
-        toggleBtn: {
-            background: 'transparent',
-            border: `1px solid ${colors.gold}`,
-            color: colors.gold,
-            borderRadius: '6px',
-            padding: '0.4rem 0.75rem',
-            cursor: 'pointer',
-            display: 'none',
-            fontSize: '1.2rem',
-            alignItems: 'center',
-            justifyContent: 'center',
-            zIndex: 1001
-        },
-        navLinks: {
-            display: 'flex',
-            alignItems: 'center',
-            gap: '1.5rem',
-            listStyle: 'none',
-            margin: 0,
-            padding: 0
-        },
-        link: {
-            color: colors.white,
-            textDecoration: 'none',
-            fontWeight: '600',
-            fontSize: '0.95rem',
-            position: 'relative',
-            padding: '0.25rem 0'
-        },
-        applyBtn: {
-            backgroundColor: colors.gold,
-            color: colors.navy,
-            fontWeight: '700',
-            padding: '0.5.rem 1.25rem',
-            borderRadius: '5px',
-            textDecoration: 'none',
-            fontSize: '0.9rem',
-            display: 'inline-block',
-            boxShadow: '0 4px 10px rgba(212, 175, 55, 0.3)'
-        },
-        mobileOverlay: {
-            position: 'fixed',
-            top: '65px', // Below sticky navbar
-            left: 0,
-            right: 0,
-            bottom: 0,
-            backgroundColor: colors.overlayBg,
-            backdropFilter: 'blur(8px)',
-            display: 'flex',
-            flexDirection: 'column',
-            padding: '2rem 1.5rem',
-            gap: '1.25rem',
-            zIndex: 999,
-            overflowY: 'auto'
-        }
-    };
+    const navy = '#0F2C59';
+    const gold = '#D4AF37';
 
     return (
-        <>
-            <style>
-                {`
-          .nav-hover-link {
-            transition: color 0.25s ease, transform 0.25s ease;
-          }
-          .nav-hover-link:hover {
-            color: ${colors.gold} !important;
-            transform: translateY(-2px);
-          }
-          .apply-hover-btn {
-            transition: transform 0.25s ease, box-shadow 0.25s ease, background-color 0.25s ease;
-          }
-          .apply-hover-btn:hover {
-            transform: translateY(-2px) scale(1.03);
-            box-shadow: 0 6px 18px rgba(212, 175, 55, 0.5) !important;
-            background-color: #e5bd3c !important;
-          }
+        <nav style={{ backgroundColor: navy, borderBottom: `3px solid ${gold}`, position: 'sticky', top: 0, zIndex: 1000, padding: '0.6rem 2rem', boxShadow: '0 4px 20px rgba(0,0,0,0.15)' }}>
+            <style>{`
+                .nav-link { color: #fff; text-decoration: none; font-weight: 600; font-size: 0.92rem; transition: color 0.2s ease; }
+                .nav-link:hover { color: ${gold}; }
+                .portal-wrapper { position: relative; }
+                .portal-menu { position: absolute; top: 100%; right: 0; background: #fff; min-width: 170px; border-radius: 8px; box-shadow: 0 10px 25px rgba(0,0,0,0.2); opacity: 0; visibility: hidden; transition: 0.2s ease; padding: 6px; border: 1px solid rgba(212,175,55,0.2); }
+                .portal-wrapper:hover .portal-menu { opacity: 1; visibility: visible; transform: translateY(4px); }
+                .portal-item { display: flex; align-items: center; gap: 8px; padding: 8px 12px; text-decoration: none; color: ${navy}; font-weight: 700; font-size: 0.88rem; border-radius: 6px; transition: background 0.2s; }
+                .portal-item:hover { background: #f1f5f9; }
+                .apply-btn { background: ${gold}; color: ${navy}; font-weight: 700; padding: 0.45rem 1.1rem; border-radius: 6px; text-decoration: none; font-size: 0.88rem; transition: background 0.2s; }
+                .apply-btn:hover { background: #e5bd3c; }
+                @media (max-width: 1024px) { .desktop-nav { display: none !important; } .mobile-btn { display: flex !important; } }
+            `}</style>
 
-          @media (max-width: 768px) {
-            .desktop-nav {
-              display: none !important;
-            }
-            .mobile-toggle-btn {
-              display: flex !important;
-            }
-          }
-
-          @keyframes fadeInDown {
-            from {
-              opacity: 0;
-              transform: translateY(-10px);
-            }
-            to {
-              opacity: 1;
-              transform: translateY(0);
-            }
-          }
-          .animate-mobile-menu {
-            animation: fadeInDown 0.25s ease-out forwards;
-          }
-        `}
-            </style>
-
-            <nav style={styles.navbar}>
-                <div style={styles.navContainer}>
-                    {/* Brand with Logo */}
-                    <Link to="/" style={styles.brandContainer}>
-                        <img
-                            src={logoImgSrc}
-                            alt="Providence College Logo"
-                            style={styles.logoImg}
-                            onError={(e) => {
-                                e.target.style.display = 'none';
-                                if (e.target.nextSibling) {
-                                    e.target.nextSibling.style.display = 'flex';
-                                }
-                            }}
-                        />
-                        <div style={{ ...styles.logoPlaceholder, display: 'none' }}>P</div>
-
-                        <div style={styles.brandText}>
-                            <span style={{ color: colors.gold }}>PROVIDENCE </span> INTERNATIONAL <br /> COLLEGE OF EDUCATION
-                        </div>
-                    </Link>
-
-                    {/* Desktop Nav Links */}
-                    <div className="desktop-nav">
-                        <ul style={styles.navLinks}>
-                            <li><Link to="/" style={styles.link} className="nav-hover-link">Home</Link></li>
-                            <li><Link to="/about" style={styles.link} className="nav-hover-link">About</Link></li>
-                            <li><Link to="/faculties" style={styles.link} className="nav-hover-link">Faculties</Link></li>
-                            <li><Link to="/news" style={styles.link} className="nav-hover-link">News</Link></li>
-                            <li><Link to="/events" style={styles.link} className="nav-hover-link">Events</Link></li>
-                            <li><Link to="/faq" style={styles.link} className="nav-hover-link">FAQs</Link></li>
-                            <li><Link to="/contact" style={styles.link} className="nav-hover-link">Contact</Link></li>
-                            <li><Link to="/gallery" style={styles.link} className="nav-hover-link">Gallery</Link></li>
-                            <li>
-                                <Link to="/admissions" style={styles.applyBtn} className="apply-hover-btn">
-                                    Apply Now
-                                </Link>
-                            </li>
-                        </ul>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%' }}>
+                {/* Brand Section */}
+                <Link to="/" style={{ display: 'flex', alignItems: 'center', gap: '0.8rem', textDecoration: 'none', flexShrink: 0 }}>
+                    <img src={logoImgSrc} alt="Logo" style={{ height: '45px', objectFit: 'contain' }} onError={(e) => { e.target.style.display = 'none'; }} />
+                    <div style={{ color: '#fff', fontWeight: '800', fontSize: '1.1rem', lineHeight: '1.2' }}>
+                        <span style={{ color: gold }}>PROVIDENCE </span> INTERNATIONAL <br /> COLLEGE OF EDUCATION
                     </div>
+                </Link>
 
-                    {/* Mobile Dropdown Button */}
-                    <button
-                        className="mobile-toggle-btn"
-                        style={styles.toggleBtn}
-                        onClick={() => setIsOpen(!isOpen)}
-                        aria-label="Toggle Navigation"
-                    >
-                        {isOpen ? '✕' : '☰'}
-                    </button>
+                {/* Desktop Nav Links Spaced Out */}
+                <div className="desktop-nav" style={{ flexGrow: 1, display: 'flex', justifyContent: 'flex-end' }}>
+                    <ul style={{ display: 'flex', alignItems: 'center', gap: '1.8rem', listStyle: 'none', margin: 0, padding: 0 }}>
+                        <li><Link to="/" className="nav-link">Home</Link></li>
+                        <li><Link to="/about" className="nav-link">About</Link></li>
+                        <li><Link to="/faculties" className="nav-link">Schools</Link></li>
+                        <li><Link to="/news" className="nav-link">News</Link></li>
+                        <li><Link to="/events" className="nav-link">Events</Link></li>
+
+                        {/* E-PORTAL DROPDOWN */}
+                        <li className="portal-wrapper">
+                            <span className="nav-link" style={{ cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                                E-Portal <span style={{ fontSize: '0.65rem', color: gold }}>▼</span>
+                            </span>
+                            <div className="portal-menu">
+                                <Link to="/login" className="portal-item">🎓 Student Portal</Link>
+                                <Link to="/staff/login" className="portal-item">💼 Staff Portal</Link>
+                            </div>
+                        </li>
+
+                        <li><Link to="/faq" className="nav-link">FAQs</Link></li>
+                        <li><Link to="/gallery" className="nav-link">Gallery</Link></li>
+                        <li><Link to="/contact" className="nav-link">Contact</Link></li>
+                        <li><Link to="/admissions" className="apply-btn">Apply Now</Link></li>
+                    </ul>
                 </div>
 
-                {/* Floating Mobile Dropdown Overlay */}
-                {isOpen && (
-                    <div style={styles.mobileOverlay} className="animate-mobile-menu">
-                        <Link to="/" style={{ ...styles.link, fontSize: '1.1rem' }} className="nav-hover-link">Home</Link>
-                        <Link to="/about" style={{ ...styles.link, fontSize: '1.1rem' }} className="nav-hover-link">About</Link>
-                        <Link to="/faculties" style={{ ...styles.link, fontSize: '1.1rem' }} className="nav-hover-link">Faculties</Link>
-                        <Link to="/news" style={{ ...styles.link, fontSize: '1.1rem' }} className="nav-hover-link">News</Link>
-                        <Link to="/events" style={{ ...styles.link, fontSize: '1.1rem' }} className="nav-hover-link">Events</Link>
-                        <Link to="/faq" style={{ ...styles.link, fontSize: '1.1rem' }} className="nav-hover-link">FAQs</Link>
-                        <Link to="/contact" style={{ ...styles.link, fontSize: '1.1rem' }} className="nav-hover-link">Contact</Link>
-                        <Link to="/gallery" style={{ ...styles.link, fontSize: '1.1rem' }} className="nav-hover-link">Gallery</Link>
-                        <Link
-                            to="/admissions"
-                            style={{ ...styles.applyBtn, textAlign: 'center', marginTop: '1rem', padding: '0.75rem 1rem' }}
-                            className="apply-hover-btn"
-                        >
-                            Apply Now
-                        </Link>
+                {/* Mobile Button */}
+                <button className="mobile-btn" onClick={() => setIsOpen(!isOpen)} style={{ display: 'none', background: 'transparent', border: `1px solid ${gold}`, color: gold, borderRadius: 6, padding: '0.3rem 0.6rem', fontSize: '1.2rem', cursor: 'pointer' }}>
+                    {isOpen ? '✕' : '☰'}
+                </button>
+            </div>
+
+            {/* Mobile Overlay */}
+            {isOpen && (
+                <div style={{ position: 'fixed', top: '65px', left: 0, right: 0, bottom: 0, background: 'rgba(15,44,89,0.98)', padding: '1.5rem', display: 'flex', flexDirection: 'column', gap: '1rem', zIndex: 999 }}>
+                    <Link to="/" className="nav-link">Home</Link>
+                    <Link to="/about" className="nav-link">About</Link>
+                    <Link to="/faculties" className="nav-link">Faculties</Link>
+                    
+                    <div>
+                        <div onClick={() => setPortalOpen(!portalOpen)} className="nav-link" style={{ display: 'flex', justifyContent: 'space-between', cursor: 'pointer' }}>
+                            <span>E-Portal</span>
+                            <span style={{ color: gold }}>{portalOpen ? '▲' : '▼'}</span>
+                        </div>
+                        {portalOpen && (
+                            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.8rem', paddingLeft: '1rem', marginTop: '0.8rem', borderLeft: `2px solid ${gold}` }}>
+                                <Link to="/login" className="nav-link">🎓 Student Portal</Link>
+                                <Link to="/staff/login" className="nav-link">💼 Staff Portal</Link>
+                            </div>
+                        )}
                     </div>
-                )}
-            </nav>
-        </>
+
+                    <Link to="/news" className="nav-link">News</Link>
+                    <Link to="/events" className="nav-link">Events</Link>
+                    <Link to="/faq" className="nav-link">FAQs</Link>
+                    <Link to="/gallery" className="nav-link">Gallery</Link>
+                    <Link to="/contact" className="nav-link">Contact</Link>
+                    <Link to="/admissions" className="apply-btn" style={{ textAlign: 'center', marginTop: '0.5rem' }}>Apply Now</Link>
+                </div>
+            )}
+        </nav>
     );
 }
