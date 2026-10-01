@@ -67,13 +67,13 @@ export default function Faculties() {
     return (
         <>
             <PageHeader
-                title="Faculties & Departments"
+                title="Schools & Departments"
                 subtitle="Explore our schools, academic departments, subject combinations, and entry requirements."
                 breadcrumb={
                     <>
                         <Link to="/" className="text-white text-decoration-none">Home</Link>
                         <span className="mx-2">/</span>
-                        <span>Faculties</span>
+                        <span>Schools</span>
                     </>
                 }
             />
