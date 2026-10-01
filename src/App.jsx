@@ -53,10 +53,12 @@ import { STAFF_ROLES } from './assets/utils/staffDB.js';
 
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap-icons/font/bootstrap-icons.css';
+import ScrollToTop from './assets/components/ScrollToTop.jsx';
 
 export default function App() {
   return (
     <AuthProvider>
+      <ScrollToTop />
       <div className="d-flex flex-column min-vh-100">
         <Navbar />
         <main className="flex-grow-1">

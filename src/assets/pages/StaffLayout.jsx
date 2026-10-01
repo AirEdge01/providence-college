@@ -23,7 +23,7 @@ export default function StaffLayout() {
 
             <div className="row">
                 <aside className="col-md-3">
-                    <Sidebar onLogout={handleLogout} />
+                    <Sidebar onLogout={handleLogout} staff={staff} />
                 </aside>
 
                 <main className="col-md-9">

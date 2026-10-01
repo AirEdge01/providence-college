@@ -151,9 +151,9 @@ export default function StaffAuthPage() {
                     <div className="col-lg-6 col-md-8 col-sm-11">
 
                         <div className="text-center mb-4 logo-slide-down">
-                            <div className="d-inline-flex align-items-center justify-content-center bg-white p-2 rounded-circle shadow-sm mb-3" style={{width:96,height:96}}>
-                                    <img src={proviLogo} alt="Providence College" style={{maxWidth: '100%', maxHeight: '100%', objectFit: 'contain'}} />
-                                </div>
+                            <div className="d-inline-flex align-items-center justify-content-center bg-white p-2 rounded-circle shadow-sm mb-3" style={{ width: 96, height: 96 }}>
+                                <img src={proviLogo} alt="Providence College" style={{ maxWidth: '100%', maxHeight: '100%', objectFit: 'contain' }} />
+                            </div>
                             <h2 className="fw-bold mb-1 text-white">PROVIDENCE INTERNATIONAL COLLEGE OF EDUCATION</h2>
                             <p className="text-light opacity-75 small">Academic Staff and Admin Control Gateway</p>
                         </div>
