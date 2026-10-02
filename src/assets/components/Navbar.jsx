@@ -23,33 +23,41 @@ export default function Navbar() {
     return (
         <nav style={{ backgroundColor: navy, borderBottom: `3px solid ${gold}`, position: 'sticky', top: 0, zIndex: 1000, padding: '0.6rem 2rem', boxShadow: '0 4px 20px rgba(0,0,0,0.15)' }}>
             <style>{`
-                                .nav-link { color: #fff; text-decoration: none; font-weight: 600; font-size: 0.92rem; transition: color 0.2s ease; }
-                                .nav-link:hover { color: ${gold}; }
-                                .portal-wrapper { position: relative; }
-                                .portal-menu { position: absolute; top: 100%; right: 0; background: #fff; min-width: 170px; border-radius: 8px; box-shadow: 0 10px 25px rgba(0,0,0,0.2); opacity: 0; visibility: hidden; transition: 0.2s ease; padding: 6px; border: 1px solid rgba(212,175,55,0.2); }
-                                .portal-wrapper:hover .portal-menu { opacity: 1; visibility: visible; transform: translateY(4px); }
-                                .portal-item { display: flex; align-items: center; gap: 8px; padding: 8px 12px; text-decoration: none; color: ${navy}; font-weight: 700; font-size: 0.88rem; border-radius: 6px; transition: background 0.2s; }
-                                .portal-item:hover { background: #f1f5f9; }
-                                .apply-btn { background: ${gold}; color: ${navy}; font-weight: 700; padding: 0.45rem 1.1rem; border-radius: 6px; text-decoration: none; font-size: 0.88rem; transition: background 0.2s; }
-                                .apply-btn:hover { background: #e5bd3c; }
-                                @media (max-width: 1024px) {
-                                    .desktop-nav { display: none !important; }
-                                    .mobile-btn { display: flex !important; }
-                                    .brand-full { display: none !important; }
-                                    .brand-mobile { display: flex !important; align-items: center; gap: 8px; }
-                                    .brand-logo { height: 36px !important; }
-                                }
-                        `}</style>
+                .nav-link { color: #fff; text-decoration: none; font-weight: 600; font-size: 0.92rem; transition: color 0.2s ease; }
+                .nav-link:hover { color: ${gold}; }
+                .portal-wrapper { position: relative; }
+                .portal-menu { position: absolute; top: 100%; right: 0; background: #fff; min-width: 170px; border-radius: 8px; box-shadow: 0 10px 25px rgba(0,0,0,0.2); opacity: 0; visibility: hidden; transition: 0.2s ease; padding: 6px; border: 1px solid rgba(212,175,55,0.2); }
+                .portal-wrapper:hover .portal-menu { opacity: 1; visibility: visible; transform: translateY(4px); }
+                .portal-item { display: flex; align-items: center; gap: 8px; padding: 8px 12px; text-decoration: none; color: ${navy}; font-weight: 700; font-size: 0.88rem; border-radius: 6px; transition: background 0.2s; }
+                .portal-item:hover { background: #f1f5f9; }
+                .apply-btn { background: ${gold}; color: ${navy}; font-weight: 700; padding: 0.45rem 1.1rem; border-radius: 6px; text-decoration: none; font-size: 0.88rem; transition: background 0.2s; }
+                .apply-btn:hover { background: #e5bd3c; }
+
+                /* Brand sizing */
+                .brand-full { color: #fff; font-weight: 800; font-size: 1.1rem; line-height: 1.2; }
+                @media (min-width: 1025px) {
+                    /* slightly bolder/larger on large screens */
+                    .brand-full { font-size: 1.2rem !important; font-weight: 900 !important; }
+                }
+                .brand-logo { height: 45px; object-fit: contain; }
+
+                /* Mobile adjustments (small tweak only) */
+                .mobile-btn { display: none; }
+                @media (max-width: 600px) {
+                    .desktop-nav { display: none !important; }
+                    .mobile-btn { display: flex !important; }
+                    /* slightly reduce logo and font so the full name fits inside nav padding */
+                    .brand-full { font-size: 0.88rem !important; line-height: 1.02 !important; }
+                    .brand-logo { height: 34px !important; }
+                }
+            `}</style>
 
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%' }}>
                 {/* Brand Section */}
-                <Link to="/" className="brand-link" style={{ display: 'flex', alignItems: 'center', gap: '0.8rem', textDecoration: 'none', flexShrink: 0 }}>
-                    <img src={logoImgSrc} alt="Logo" className="brand-logo" style={{ height: '45px', objectFit: 'contain' }} onError={(e) => { e.target.style.display = 'none'; }} />
-                    <div className="brand-full" style={{ color: '#fff', fontWeight: '800', fontSize: '1.1rem', lineHeight: '1.2' }}>
+                <Link to="/" style={{ display: 'flex', alignItems: 'center', gap: '0.8rem', textDecoration: 'none', flexShrink: 0 }}>
+                    <img src={logoImgSrc} alt="Logo" className="brand-logo" onError={(e) => { e.target.style.display = 'none'; }} />
+                    <div className="brand-full">
                         <span style={{ color: gold }}>PROVIDENCE </span> INTERNATIONAL <br /> COLLEGE OF EDUCATION
-                    </div>
-                    <div className="brand-mobile" style={{ display: 'none', color: '#fff', fontWeight: 800, fontSize: '1rem' }}>
-                        <span style={{ color: gold }}>PROVIDENCE</span>
                     </div>
                 </Link>
 
