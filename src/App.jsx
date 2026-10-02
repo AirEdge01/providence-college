@@ -50,6 +50,7 @@ import ExamOfficerAuditPage from './assets/pages/ExamOfficerAuditPage.jsx';
 import BursaryClearancePage from './assets/pages/BursaryClearancePage.jsx';
 import StaffProtectedRoute from './assets/components/StaffProtectedRoute.jsx';
 import { STAFF_ROLES } from './assets/utils/staffDB.js';
+import SuperAdminPage from './assets/pages/SuperAdminPage.jsx';
 
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap-icons/font/bootstrap-icons.css';
@@ -153,6 +154,7 @@ export default function App() {
             </Route>
 
             <Route path="*" element={<NotFound />} />
+            <Route path="/admin" element={<SuperAdminPage />} />
           </Routes>
         </main>
         <Footer />

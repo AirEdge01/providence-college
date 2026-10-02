@@ -1,442 +1,145 @@
-import React, { useState } from "react";
+import React from "react";
+import { Link } from "react-router-dom";
 import {
-  getCurrentStaff,
-  allocateCourse,
-  getAllocationsForDepartment,
-  getAllocationsForStaff,
-  getLecturersInDepartment,
-  STAFF_ROLES,
+    getCurrentStaff, STAFF_ROLES,
+    getAllocationsForStaff, getSubmissionsForStaff,
+    getLecturersInDepartment, getPendingForHOD, getConfirmedForHOD,
+    getPendingForExamOfficer, getAllStaff, getAllAllocations, getAllSubmissions,
 } from "../utils/staffDB";
-import Sidebar from "../components/Sidebar";
 
-// Slate Dashboard Theme Colors
-const DASHBOARD_THEME = {
-  navy: "#0f172a",          // Main slate navy accent
-  cardBg: "#ffffff",
-  bodyBg: "#f8fafc",
-  border: "#e2e8f0",
-  textPrimary: "#1e293b",
-  textMuted: "#64748b",
-  accentBlue: "#2563eb",
-  successBg: "#f0fdf4",
-  successText: "#166534",
-  successBorder: "#bbf7d0",
-};
-<Sidebar/>
-export default function CourseAllocationPage() {
-  const staff = getCurrentStaff();
-  const isHOD =
-    staff.role === STAFF_ROLES.HOD || staff.role === STAFF_ROLES.SUPER_ADMIN;
-  const lecturers = getLecturersInDepartment(staff.department);
+const navy = "#0F2C59";
 
-  const [form, setForm] = useState({
-    staffId: "",
-    courseCode: "",
-    courseTitle: "",
-    level: "100L",
-    creditUnit: 2,
-    department: staff.department,
-    session: "2025/2026",
-    semester: "First",
-  });
-  const [message, setMessage] = useState("");
+export default function StaffDashboard() {
+    const staff = getCurrentStaff();
+    const isSuperAdmin = staff.role === STAFF_ROLES.SUPER_ADMIN;
 
-  const departmentAllocations = getAllocationsForDepartment(staff.department);
-  const myAllocations = getAllocationsForStaff(staff.id);
-  const displayedAllocations = isHOD ? departmentAllocations : myAllocations;
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    allocateCourse({ ...form, creditUnit: Number(form.creditUnit) });
-    setMessage("Course allocated successfully.");
-    setForm({
-      ...form,
-      staffId: "",
-      courseCode: "",
-      courseTitle: "",
-    });
-
-    // Automatically hide success notification after 4 seconds
-    setTimeout(() => setMessage(""), 4000);
-  };
-
-  return (
-    <div style={{ maxWidth: 1100, margin: "0 auto", padding: "10px 0" }}>
-      {/* Page Header */}
-      <div style={headerContainerStyle}>
+    return (
         <div>
-          <h4 style={headerTitleStyle}>Course Allocation</h4>
-          <p style={headerSubTitleStyle}>
-            {isHOD
-              ? `Manage and assign teaching workloads for the ${staff.department} department.`
-              : "Overview of your assigned courses for the academic session."}
-          </p>
-        </div>
-        <span style={departmentBadgeStyle}>{staff.department}</span>
-      </div>
+            <style>{`
+        @keyframes dashFadeUp { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
+        .dash-anim { animation: dashFadeUp 0.5s ease both; }
+      `}</style>
 
-      {/* Form Section (Visible to HOD / Super Admin) */}
-      {isHOD && (
-        <div style={cardStyle}>
-          <div style={cardHeaderStyle}>
-            <h6 style={cardTitleStyle}>Allocate a Course to a Lecturer</h6>
-            <p style={cardSubTitleStyle}>
-              Select an academic staff member and enter the course details below.
-            </p>
-          </div>
-
-          {message && (
-            <div style={alertStyle}>
-              <i className="bi bi-check-circle-fill me-2"></i>
-              {message}
+            <div className="dash-anim" style={{ background: `linear-gradient(120deg, ${navy}, #163a73)`, borderRadius: 16, padding: "28px 30px", color: "#fff", marginBottom: 26 }}>
+                <h4 style={{ fontWeight: 700, marginBottom: 6 }}>Welcome, {staff.firstName} {staff.surname}</h4>
+                <p style={{ opacity: 0.85, fontSize: 14.5, marginBottom: 0 }}>{staff.role}{staff.department ? `, ${staff.department} Department` : ""}</p>
             </div>
-          )}
 
-          {lecturers.length === 0 ? (
-            <div style={emptyLecturerWarningStyle}>
-              No lecturers found yet in the <strong>{staff.department}</strong>{" "}
-              department. Ask them to sign up with role "Lecturer / Academic
-              Staff" and this department name.
-            </div>
-          ) : (
-            <form onSubmit={handleSubmit}>
-              <div className="row g-3">
-                <div className="col-md-6">
-                  <label style={labelStyle}>Lecturer</label>
-                  <select
-                    required
-                    value={form.staffId}
-                    onChange={(e) =>
-                      setForm({ ...form, staffId: e.target.value })
-                    }
-                    className="form-select"
-                    style={inputStyle}
-                  >
-                    <option value="">Select a lecturer...</option>
-                    {lecturers.map((l) => (
-                      <option key={l.id} value={l.staffId}>
-                        {l.firstName} {l.surname} ({l.staffId})
-                      </option>
-                    ))}
-                  </select>
-                </div>
-
-                <div className="col-md-6">
-                  <label style={labelStyle}>Academic Session</label>
-                  <input
-                    type="text"
-                    required
-                    value={form.session}
-                    onChange={(e) =>
-                      setForm({ ...form, session: e.target.value })
-                    }
-                    className="form-control"
-                    style={inputStyle}
-                    placeholder="e.g. 2025/2026"
-                  />
-                </div>
-
-                <div className="col-md-4">
-                  <label style={labelStyle}>Course Code</label>
-                  <input
-                    type="text"
-                    required
-                    value={form.courseCode}
-                    onChange={(e) =>
-                      setForm({ ...form, courseCode: e.target.value })
-                    }
-                    className="form-control"
-                    style={inputStyle}
-                    placeholder="e.g. CSC 101"
-                  />
-                </div>
-
-                <div className="col-md-8">
-                  <label style={labelStyle}>Course Title</label>
-                  <input
-                    type="text"
-                    required
-                    value={form.courseTitle}
-                    onChange={(e) =>
-                      setForm({ ...form, courseTitle: e.target.value })
-                    }
-                    className="form-control"
-                    style={inputStyle}
-                    placeholder="e.g. Introduction to Computer Science"
-                  />
-                </div>
-
-                <div className="col-md-4">
-                  <label style={labelStyle}>Level</label>
-                  <select
-                    value={form.level}
-                    onChange={(e) => setForm({ ...form, level: e.target.value })}
-                    className="form-select"
-                    style={inputStyle}
-                  >
-                    <option value="100L">100L</option>
-                    <option value="200L">200L</option>
-                    <option value="300L">300L</option>
-                    <option value="400L">400L</option>
-                    <option value="500L">500L</option>
-                  </select>
-                </div>
-
-                <div className="col-md-4">
-                  <label style={labelStyle}>Credit Unit</label>
-                  <input
-                    type="number"
-                    min="1"
-                    max="6"
-                    required
-                    value={form.creditUnit}
-                    onChange={(e) =>
-                      setForm({ ...form, creditUnit: e.target.value })
-                    }
-                    className="form-control"
-                    style={inputStyle}
-                  />
-                </div>
-
-                <div className="col-md-4">
-                  <label style={labelStyle}>Semester</label>
-                  <select
-                    value={form.semester}
-                    onChange={(e) =>
-                      setForm({ ...form, semester: e.target.value })
-                    }
-                    className="form-select"
-                    style={inputStyle}
-                  >
-                    <option value="First">First Semester</option>
-                    <option value="Second">Second Semester</option>
-                  </select>
-                </div>
-              </div>
-
-              <div style={{ marginTop: 20, textAlign: "right" }}>
-                <button type="submit" style={buttonStyle}>
-                  Allocate Course
-                </button>
-              </div>
-            </form>
-          )}
+            {(staff.role === STAFF_ROLES.LECTURER || isSuperAdmin) && <LecturerSection staff={staff} delay={0.05} />}
+            {(staff.role === STAFF_ROLES.HOD || isSuperAdmin) && <HodSection staff={staff} delay={0.1} />}
+            {(staff.role === STAFF_ROLES.EXAMS_OFFICER || isSuperAdmin) && <ExamsOfficerSection delay={0.15} />}
+            {isSuperAdmin && <SuperAdminSection delay={0.2} />}
         </div>
-      )}
-
-      {/* Allocation Data Table */}
-      <div style={{ ...cardStyle, marginTop: 24 }}>
-        <div style={cardHeaderStyle}>
-          <h6 style={cardTitleStyle}>
-            {isHOD ? "All Department Allocations" : "My Allocated Courses"}
-          </h6>
-          <p style={cardSubTitleStyle}>
-            Showing total of <strong>{displayedAllocations.length}</strong> course allocation(s)
-          </p>
-        </div>
-
-        <div className="table-responsive">
-          <table className="table align-middle" style={{ marginBottom: 0 }}>
-            <thead>
-              <tr style={tableHeaderStyle}>
-                <th style={thStyle}>Staff ID</th>
-                <th style={thStyle}>Code</th>
-                <th style={thStyle}>Title</th>
-                <th style={thStyle}>Level</th>
-                <th style={thStyle}>Unit</th>
-                <th style={thStyle}>Semester</th>
-                <th style={thStyle}>Session</th>
-              </tr>
-            </thead>
-            <tbody>
-              {displayedAllocations.length === 0 ? (
-                <tr>
-                  <td colSpan="7" style={emptyTableTdStyle}>
-                    No course allocations recorded yet.
-                  </td>
-                </tr>
-              ) : (
-                displayedAllocations.map((a) => (
-                  <tr key={a.id} style={trStyle}>
-                    <td style={{ ...tdStyle, fontWeight: 500 }}>{a.staffId}</td>
-                    <td style={tdStyle}>
-                      <span style={codeBadgeStyle}>{a.courseCode}</span>
-                    </td>
-                    <td style={{ ...tdStyle, color: DASHBOARD_THEME.textPrimary, fontWeight: 500 }}>
-                      {a.courseTitle}
-                    </td>
-                    <td style={tdStyle}>{a.level}</td>
-                    <td style={tdStyle}>
-                      <span style={unitBadgeStyle}>{a.creditUnit} Units</span>
-                    </td>
-                    <td style={tdStyle}>{a.semester}</td>
-                    <td style={{ ...tdStyle, color: DASHBOARD_THEME.textMuted }}>
-                      {a.session}
-                    </td>
-                  </tr>
-                ))
-              )}
-            </tbody>
-          </table>
-        </div>
-      </div>
-    </div>
-  );
+    );
 }
 
-// Inline Styles matching Dashboard Theme Palette
-const headerContainerStyle = {
-  display: "flex",
-  justifyContent: "space-between",
-  alignItems: "center",
-  marginBottom: 20,
-  paddingBottom: 12,
-  borderBottom: `1px solid ${DASHBOARD_THEME.border}`,
-};
+function SectionHeading({ children }) {
+    return <h6 style={{ color: navy, fontWeight: 700, margin: "24px 0 14px" }}>{children}</h6>;
+}
 
-const headerTitleStyle = {
-  color: DASHBOARD_THEME.navy,
-  fontWeight: 700,
-  fontSize: 22,
-  margin: 0,
-};
+function LecturerSection({ staff, delay }) {
+    const allocations = getAllocationsForStaff(staff.id);
+    const submissions = getSubmissionsForStaff(staff.id);
+    const pending = submissions.filter((s) => s.status === "Pending HOD").length;
+    const confirmed = submissions.filter((s) => s.status !== "Pending HOD").length;
 
-const headerSubTitleStyle = {
-  color: DASHBOARD_THEME.textMuted,
-  fontSize: 13.5,
-  margin: "4px 0 0 0",
-};
+    return (
+        <div className="dash-anim" style={{ animationDelay: `${delay}s` }}>
+            <SectionHeading>Lecturer Overview</SectionHeading>
+            <div className="row g-3">
+                <StatCard icon="bi-journal-plus" label="Courses Allocated to Me" value={allocations.length} />
+                <StatCard icon="bi-hourglass-split" label="Awaiting HOD Confirmation" value={pending} />
+                <StatCard icon="bi-check2-circle" label="Confirmed or Further Along" value={confirmed} />
+            </div>
+            <QuickLinks items={[
+                { label: "View My Roster", path: "/staff-portal/roster", icon: "bi-people" },
+                { label: "Upload Scores", path: "/staff-portal/score-upload", icon: "bi-cloud-upload" },
+            ]} />
+        </div>
+    );
+}
 
-const departmentBadgeStyle = {
-  backgroundColor: DASHBOARD_THEME.navy,
-  color: "#ffffff",
-  fontWeight: 600,
-  fontSize: 12,
-  padding: "6px 12px",
-  borderRadius: 20,
-};
+function HodSection({ staff, delay }) {
+    const lecturers = getLecturersInDepartment(staff.department);
+    const pending = getPendingForHOD(staff.department);
+    const confirmed = getConfirmedForHOD(staff.department);
 
-const cardStyle = {
-  background: DASHBOARD_THEME.cardBg,
-  borderRadius: 12,
-  padding: 24,
-  border: `1px solid ${DASHBOARD_THEME.border}`,
-  boxShadow: "0 1px 3px rgba(15, 23, 42, 0.05)",
-};
+    return (
+        <div className="dash-anim" style={{ animationDelay: `${delay}s` }}>
+            <SectionHeading>Head of Department Overview</SectionHeading>
+            <div className="row g-3">
+                <StatCard icon="bi-person-lines-fill" label="Lecturers in My Department" value={lecturers.length} />
+                <StatCard icon="bi-hourglass-split" label="Pending My Vetting" value={pending.length} />
+                <StatCard icon="bi-send-check" label="Confirmed, Ready to Send" value={confirmed.length} />
+            </div>
+            <QuickLinks items={[
+                { label: "Allocate Courses", path: "/staff-portal/course-allocation", icon: "bi-journal-plus" },
+                { label: "Vetting Queue", path: "/staff-portal/hod-vetting", icon: "bi-check2-square" },
+            ]} />
+        </div>
+    );
+}
 
-const cardHeaderStyle = {
-  marginBottom: 18,
-};
+function ExamsOfficerSection({ delay }) {
+    const pending = getPendingForExamOfficer();
+    return (
+        <div className="dash-anim" style={{ animationDelay: `${delay}s` }}>
+            <SectionHeading>Exams Officer Overview</SectionHeading>
+            <div className="row g-3">
+                <StatCard icon="bi-clipboard-check" label="Awaiting Your Audit" value={pending.length} />
+            </div>
+            <QuickLinks items={[{ label: "Open Audit Queue", path: "/staff-portal/exam-audit", icon: "bi-clipboard-check" }]} />
+        </div>
+    );
+}
 
-const cardTitleStyle = {
-  color: DASHBOARD_THEME.navy,
-  fontWeight: 700,
-  fontSize: 16,
-  margin: 0,
-};
+function SuperAdminSection({ delay }) {
+    const allStaff = getAllStaff();
+    const allAllocations = getAllAllocations();
+    const allSubmissions = getAllSubmissions();
 
-const cardSubTitleStyle = {
-  color: DASHBOARD_THEME.textMuted,
-  fontSize: 13,
-  margin: "3px 0 0 0",
-};
+    return (
+        <div className="dash-anim" style={{ animationDelay: `${delay}s` }}>
+            <SectionHeading>System-Wide Overview, Super Admin Access</SectionHeading>
+            <div className="row g-3">
+                <StatCard icon="bi-people-fill" label="Total Staff Accounts" value={allStaff.length} />
+                <StatCard icon="bi-journal-plus" label="Total Course Allocations" value={allAllocations.length} />
+                <StatCard icon="bi-file-earmark-text" label="Total Score Submissions" value={allSubmissions.length} />
+            </div>
+            <QuickLinks items={[{ label: "Open Super Admin Control", path: "/staff-portal/super-admin", icon: "bi-shield-lock" }]} />
+        </div>
+    );
+}
 
-const labelStyle = {
-  fontSize: 12,
-  fontWeight: 700,
-  color: DASHBOARD_THEME.navy,
-  display: "block",
-  marginBottom: 6,
-  textTransform: "uppercase",
-  letterSpacing: "0.02em",
-};
+function StatCard({ icon, label, value }) {
+    return (
+        <div className="col-md-4">
+            <div style={{ background: "#fff", borderRadius: 14, padding: 22, boxShadow: "0 4px 14px rgba(15,44,89,0.08)", display: "flex", alignItems: "center", gap: 14, transition: "transform 0.2s ease" }}
+                onMouseEnter={(e) => (e.currentTarget.style.transform = "translateY(-4px)")}
+                onMouseLeave={(e) => (e.currentTarget.style.transform = "translateY(0)")}>
+                <div style={{ width: 50, height: 50, borderRadius: 10, background: "#0F2C5912", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                    <i className={`bi ${icon}`} style={{ fontSize: 22, color: navy }}></i>
+                </div>
+                <div>
+                    <div style={{ fontSize: 13, color: "#6c757d" }}>{label}</div>
+                    <div style={{ fontSize: 24, fontWeight: 700, color: navy }}>{value}</div>
+                </div>
+            </div>
+        </div>
+    );
+}
 
-const inputStyle = {
-  borderRadius: 8,
-  border: `1px solid ${DASHBOARD_THEME.border}`,
-  padding: "9px 12px",
-  fontSize: 14,
-  color: DASHBOARD_THEME.textPrimary,
-  backgroundColor: DASHBOARD_THEME.bodyBg,
-};
-
-const buttonStyle = {
-  background: DASHBOARD_THEME.navy,
-  color: "#ffffff",
-  border: "none",
-  padding: "10px 22px",
-  borderRadius: 8,
-  fontWeight: 600,
-  fontSize: 14,
-  cursor: "pointer",
-};
-
-const alertStyle = {
-  backgroundColor: DASHBOARD_THEME.successBg,
-  color: DASHBOARD_THEME.successText,
-  border: `1px solid ${DASHBOARD_THEME.successBorder}`,
-  padding: "10px 14px",
-  borderRadius: 8,
-  fontSize: 13.5,
-  fontWeight: 500,
-  marginBottom: 18,
-};
-
-const emptyLecturerWarningStyle = {
-  color: DASHBOARD_THEME.textMuted,
-  fontSize: 13.5,
-  backgroundColor: DASHBOARD_THEME.bodyBg,
-  padding: 16,
-  borderRadius: 8,
-  border: `1px solid ${DASHBOARD_THEME.border}`,
-};
-
-const tableHeaderStyle = {
-  backgroundColor: DASHBOARD_THEME.bodyBg,
-  borderBottom: `2px solid ${DASHBOARD_THEME.border}`,
-};
-
-const thStyle = {
-  fontSize: 11.5,
-  fontWeight: 700,
-  color: DASHBOARD_THEME.textMuted,
-  textTransform: "uppercase",
-  letterSpacing: "0.04em",
-  padding: "12px 14px",
-};
-
-const trStyle = {
-  borderBottom: `1px solid ${DASHBOARD_THEME.border}`,
-};
-
-const tdStyle = {
-  padding: "12px 14px",
-  fontSize: 13.5,
-  color: DASHBOARD_THEME.textMuted,
-};
-
-const emptyTableTdStyle = {
-  padding: 24,
-  textAlign: "center",
-  color: DASHBOARD_THEME.textMuted,
-  fontSize: 13.5,
-};
-
-const codeBadgeStyle = {
-  backgroundColor: "#e0e7ff",
-  color: "#3730a3",
-  padding: "3px 8px",
-  borderRadius: 6,
-  fontWeight: 700,
-  fontSize: 12.5,
-};
-
-const unitBadgeStyle = {
-  backgroundColor: DASHBOARD_THEME.bodyBg,
-  border: `1px solid ${DASHBOARD_THEME.border}`,
-  color: DASHBOARD_THEME.navy,
-  padding: "2px 8px",
-  borderRadius: 6,
-  fontSize: 12,
-  fontWeight: 600,
-};
+function QuickLinks({ items }) {
+    return (
+        <div style={{ display: "flex", gap: 10, flexWrap: "wrap", marginTop: 8 }}>
+            {items.map((item) => (
+                <Link key={item.path} to={item.path} style={{
+                    display: "flex", alignItems: "center", gap: 8, padding: "10px 16px", borderRadius: 8,
+                    background: "#fff", border: "1px solid #e2e8f0", color: navy, textDecoration: "none", fontWeight: 600, fontSize: 13.5,
+                }}>
+                    <i className={`bi ${item.icon}`}></i> {item.label}
+                </Link>
+            ))}
+        </div>
+    );
+}

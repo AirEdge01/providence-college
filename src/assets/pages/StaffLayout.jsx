@@ -1,35 +1,29 @@
-import React from 'react';
-import { Outlet, useNavigate } from 'react-router-dom';
-import { staffLogout, getCurrentStaff } from '../utils/staffDB';
-import Sidebar from '../components/Sidebar';
+import React from "react";
+import { Outlet, useNavigate, Navigate } from "react-router-dom";
+import { staffLogout, getCurrentStaff } from "../utils/staffDB";
+import Sidebar from "../components/Sidebar";
 
 export default function StaffLayout() {
-    const navigate = useNavigate();
-    const staff = getCurrentStaff() || { firstName: 'Guest', surname: '', role: '' };
+  const navigate = useNavigate();
+  const staff = getCurrentStaff();
 
-    const handleLogout = () => {
-        staffLogout();
-        navigate('/staff/login');
-    };
+  if (!staff) return <Navigate to="/staff/login" replace />;
 
-    return (
-        <div className="container py-4">
-            <div className="d-flex align-items-center justify-content-between mb-4">
-                <div>
-                    <h3 style={{ margin: 0 }}>Staff Portal</h3>
-                    <div style={{ color: '#6c757d' }}>{staff.fullName || `${staff.firstName} ${staff.surname}`} {staff.role && `• ${staff.role}`}</div>
-                </div>
-            </div>
+  const handleLogout = () => {
+    staffLogout();
+    navigate("/staff/login");
+  };
 
-            <div className="row">
-                <aside className="col-md-3">
-                    <Sidebar onLogout={handleLogout} staff={staff} />
-                </aside>
-
-                <main className="col-md-9">
-                    <Outlet />
-                </main>
-            </div>
-        </div>
-    );
+  return (
+    <div className="container-fluid py-4" style={{ background: "#F5F6F8", minHeight: "100vh" }}>
+      <div className="row">
+        <aside className="col-md-3 col-lg-2 mb-4">
+          <Sidebar onLogout={handleLogout} staff={staff} />
+        </aside>
+        <main className="col-md-9 col-lg-10">
+          <Outlet />
+        </main>
+      </div>
+    </div>
+  );
 }

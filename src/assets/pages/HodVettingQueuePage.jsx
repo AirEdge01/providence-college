@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { getCurrentStaff, getPendingForHOD, getConfirmedForHOD, confirmSubmission, toggleResubmission, sendToExamOfficer } from "../utils/staffDB";
+import { getCurrentStaff, getPendingForHOD, getConfirmedForHOD, confirmSubmission, toggleResubmission, sendToExamOfficer, sendAllConfirmedToExamOfficer } from "../utils/staffDB";
 
 const navy = "#0F2C59";
 const gold = "#D4AF37";
@@ -8,28 +8,26 @@ export default function HodVettingQueuePage() {
     const staff = getCurrentStaff();
     const [, setTick] = useState(0);
     const refresh = () => setTick((t) => t + 1);
+    const [message, setMessage] = useState("");
 
     const pending = getPendingForHOD(staff.department);
     const confirmed = getConfirmedForHOD(staff.department);
 
-    const handleConfirm = (id) => {
-        confirmSubmission(id);
-        refresh();
-    };
+    const handleConfirm = (id) => { confirmSubmission(id); refresh(); };
+    const handleToggle = (id, allow) => { toggleResubmission(id, allow); refresh(); };
+    const handleSend = (id) => { sendToExamOfficer(id); refresh(); };
 
-    const handleToggle = (id, allow) => {
-        toggleResubmission(id, allow);
+    const handleSendAll = () => {
+        const count = sendAllConfirmedToExamOfficer(staff.department);
+        setMessage(`Sent ${count} collated result sheet(s) to the Exams Officer.`);
         refresh();
-    };
-
-    const handleSend = (id) => {
-        sendToExamOfficer(id);
-        refresh();
+        setTimeout(() => setMessage(""), 4000);
     };
 
     return (
         <div>
             <h4 style={{ color: navy, fontWeight: 700, marginBottom: 18 }}>HOD Vetting Queue</h4>
+            {message && <div className="alert alert-success py-2">{message}</div>}
 
             <h6 style={{ color: navy, fontWeight: 700, marginBottom: 12 }}>Pending Your Confirmation</h6>
             {pending.length === 0 ? (
@@ -49,7 +47,14 @@ export default function HodVettingQueuePage() {
                 ))
             )}
 
-            <h6 style={{ color: navy, fontWeight: 700, margin: "24px 0 12px" }}>Confirmed, Ready to Send</h6>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", margin: "24px 0 12px" }}>
+                <h6 style={{ color: navy, fontWeight: 700, margin: 0 }}>Confirmed, Ready to Send</h6>
+                {confirmed.length > 0 && (
+                    <button onClick={handleSendAll} style={{ background: gold, color: navy, border: "none", padding: "8px 18px", borderRadius: 8, fontWeight: 700 }}>
+                        Send All Confirmed to Exams Officer
+                    </button>
+                )}
+            </div>
             {confirmed.length === 0 ? (
                 <div style={cardStyle}><div style={{ textAlign: "center", padding: "20px 0", color: "#adb5bd" }}>No confirmed results waiting to be sent.</div></div>
             ) : (
@@ -57,12 +62,10 @@ export default function HodVettingQueuePage() {
                     <div key={sub.id} style={{ ...cardStyle, marginBottom: 16 }}>
                         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12, flexWrap: "wrap", gap: 10 }}>
                             <h6 style={{ color: navy, fontWeight: 700, margin: 0 }}>{sub.courseCode}, {sub.courseTitle}</h6>
-                            <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-                                <label style={{ display: "flex", alignItems: "center", gap: 6, fontSize: 13, color: "#6c757d" }}>
-                                    <input type="checkbox" checked={!sub.locked} onChange={(e) => handleToggle(sub.id, e.target.checked)} />
-                                    Allow lecturer to resubmit
-                                </label>
-                            </div>
+                            <label style={{ display: "flex", alignItems: "center", gap: 6, fontSize: 13, color: "#6c757d" }}>
+                                <input type="checkbox" checked={!sub.locked} onChange={(e) => handleToggle(sub.id, e.target.checked)} />
+                                Allow lecturer to resubmit
+                            </label>
                         </div>
                         <ScoreTable scores={sub.scores} />
                         <button onClick={() => handleSend(sub.id)} style={{ background: gold, color: navy, border: "none", padding: "8px 18px", borderRadius: 8, fontWeight: 700 }}>
@@ -81,9 +84,7 @@ function ScoreTable({ scores }) {
             <thead><tr style={{ fontSize: 13 }}><th>Matric</th><th>CA</th><th>Exam</th><th>Assignment</th><th>Total</th><th>Grade</th></tr></thead>
             <tbody>
                 {scores.map((s, i) => (
-                    <tr key={i} style={{ fontSize: 14 }}>
-                        <td>{s.matricNumber}</td><td>{s.ca}</td><td>{s.exam}</td><td>{s.assignment}</td><td style={{ fontWeight: 700 }}>{s.total}</td><td>{s.grade}</td>
-                    </tr>
+                    <tr key={i} style={{ fontSize: 14 }}><td>{s.matricNumber}</td><td>{s.ca}</td><td>{s.exam}</td><td>{s.assignment}</td><td style={{ fontWeight: 700 }}>{s.total}</td><td>{s.grade}</td></tr>
                 ))}
             </tbody>
         </table>

@@ -1,5 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { getCurrentStaff, getAllocationsForStaff, getExistingSubmission, submitScores, gradeFromTotal } from "../utils/staffDB";
+// change this:
+// import {/utils/staffDB} from "../../utils/staffDB";
+// to this:
+// import { /utils/staffDB} from "../utils/staffDB";
 
 const navy = "#0F2C59";
 const gold = "#D4AF37";
