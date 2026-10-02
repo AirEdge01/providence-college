@@ -49,7 +49,7 @@ export default function Programmes() {
                                     <thead>
                                         <tr style={{ color: 'var(--pce-text-muted)', fontSize: '0.85rem' }}>
                                             <th>Programme</th>
-                                            <th>Faculty</th>
+                                            <th>School</th>
                                             <th>Duration</th>
                                             <th></th>
                                         </tr>
