@@ -116,12 +116,30 @@ export function allocateCourse(allocation) {
   return newAllocation;
 }
 
+const normalizeStaffRef = (value) => String(value ?? "").trim().toLowerCase();
+
 export function getAllocationsForStaff(staffId) {
-  return getAll(ALLOCATIONS_KEY).filter((a) => a.staffId === staffId);
+  const target = normalizeStaffRef(staffId);
+  return getAll(ALLOCATIONS_KEY).filter((a) => normalizeStaffRef(a.staffId) === target);
 }
 
 export function getAllocationsForDepartment(department) {
   return getAll(ALLOCATIONS_KEY).filter((a) => a.department === department);
+}
+
+export function updateAllocation(id, updates) {
+  const allocations = getAll(ALLOCATIONS_KEY);
+  const index = allocations.findIndex((a) => a.id === id);
+  if (index === -1) throw new Error("Allocation not found.");
+
+  allocations[index] = {
+    ...allocations[index],
+    ...updates,
+    creditUnit: Number(updates.creditUnit ?? allocations[index].creditUnit),
+  };
+
+  saveAll(ALLOCATIONS_KEY, allocations);
+  return allocations[index];
 }
 
 export function getAllAllocations() {
@@ -135,8 +153,9 @@ export function deleteAllocation(id) {
 // ---- Score Submissions ----
 // status moves: "Pending HOD" -> "HOD Confirmed" -> "Sent to Exams Officer" -> "Published"
 export function getExistingSubmission(staffId, courseCode, session, semester) {
+  const target = normalizeStaffRef(staffId);
   return getAll(SUBMISSIONS_KEY).find(
-    (s) => s.staffId === staffId && s.courseCode === courseCode && s.session === session && s.semester === semester
+    (s) => normalizeStaffRef(s.staffId) === target && s.courseCode === courseCode && s.session === session && s.semester === semester
   );
 }
 
@@ -179,7 +198,8 @@ export function submitScores(payload) {
 }
 
 export function getSubmissionsForStaff(staffId) {
-  return getAll(SUBMISSIONS_KEY).filter((s) => s.staffId === staffId);
+  const target = normalizeStaffRef(staffId);
+  return getAll(SUBMISSIONS_KEY).filter((s) => normalizeStaffRef(s.staffId) === target);
 }
 
 export function getPendingForHOD(department) {

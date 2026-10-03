@@ -38,8 +38,8 @@ function SectionHeading({ children }) {
 }
 
 function LecturerSection({ staff, delay }) {
-    const allocations = getAllocationsForStaff(staff.id);
-    const submissions = getSubmissionsForStaff(staff.id);
+    const allocations = getAllocationsForStaff(staff.staffId);
+    const submissions = getSubmissionsForStaff(staff.staffId);
     const pending = submissions.filter((s) => s.status === "Pending HOD").length;
     const confirmed = submissions.filter((s) => s.status !== "Pending HOD").length;
 

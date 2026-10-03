@@ -5,7 +5,7 @@ const navy = "#0F2C59";
 
 export default function AssignedCourseRosterPage() {
   const staff = getCurrentStaff();
-  const allocations = getAllocationsForStaff(staff.id);
+  const allocations = getAllocationsForStaff(staff.staffId);
   const [selectedCourse, setSelectedCourse] = useState(allocations[0]?.courseCode || "");
 
   const students = JSON.parse(localStorage.getItem("pice_students") || "[]");
@@ -13,8 +13,8 @@ export default function AssignedCourseRosterPage() {
 
   const roster = course
     ? students.filter((s) =>
-        (s.courses || []).some((c) => c.courseCode === course.courseCode && c.session === course.session)
-      )
+      (s.courses || []).some((c) => c.courseCode === course.courseCode && c.session === course.session)
+    )
     : [];
 
   if (allocations.length === 0) {

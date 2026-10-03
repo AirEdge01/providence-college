@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { getCurrentStaff, allocateCourse, getAllocationsForDepartment, getAllocationsForStaff, getLecturersInDepartment, STAFF_ROLES } from "../utils/staffDB";
+import { getCurrentStaff, allocateCourse, updateAllocation, deleteAllocation, getAllocationsForDepartment, getAllocationsForStaff, getLecturersInDepartment, STAFF_ROLES } from "../utils/staffDB";
 
 const navy = "#0F2C59";
 
@@ -8,18 +8,55 @@ export default function CourseAllocationPage() {
   const isHOD = staff.role === STAFF_ROLES.HOD || staff.role === STAFF_ROLES.SUPER_ADMIN;
   const lecturers = getLecturersInDepartment(staff.department);
 
-  const [form, setForm] = useState({ staffId: "", courseCode: "", courseTitle: "", level: "100L", creditUnit: 2, department: staff.department, session: "2025/2026", semester: "First" });
+  const emptyForm = { staffId: "", courseCode: "", courseTitle: "", level: "100L", creditUnit: 2, department: staff.department, session: "2025/2026", semester: "First" };
+  const [form, setForm] = useState(emptyForm);
+  const [editingId, setEditingId] = useState(null);
   const [message, setMessage] = useState("");
 
   const departmentAllocations = getAllocationsForDepartment(staff.department);
-  const myAllocations = getAllocationsForStaff(staff.id);
+  const myAllocations = getAllocationsForStaff(staff.staffId);
   const displayedAllocations = isHOD ? departmentAllocations : myAllocations;
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    allocateCourse({ ...form, creditUnit: Number(form.creditUnit) });
-    setMessage("Course allocated successfully.");
-    setForm({ ...form, staffId: "", courseCode: "", courseTitle: "" });
+    const payload = { ...form, creditUnit: Number(form.creditUnit) };
+
+    if (editingId) {
+      updateAllocation(editingId, payload);
+      setMessage("Allocated course updated successfully.");
+    } else {
+      allocateCourse(payload);
+      setMessage("Course allocated successfully.");
+    }
+
+    setForm(emptyForm);
+    setEditingId(null);
+    setTimeout(() => setMessage(""), 4000);
+  };
+
+  const startEdit = (allocation) => {
+    setEditingId(allocation.id);
+    setForm({
+      staffId: allocation.staffId,
+      courseCode: allocation.courseCode,
+      courseTitle: allocation.courseTitle,
+      level: allocation.level,
+      creditUnit: allocation.creditUnit,
+      department: allocation.department,
+      session: allocation.session,
+      semester: allocation.semester,
+    });
+  };
+
+  const cancelEdit = () => {
+    setEditingId(null);
+    setForm(emptyForm);
+  };
+
+  const handleDelete = (id) => {
+    deleteAllocation(id);
+    setMessage("Allocated course removed.");
+    if (editingId === id) cancelEdit();
     setTimeout(() => setMessage(""), 4000);
   };
 
@@ -37,7 +74,7 @@ export default function CourseAllocationPage() {
 
       {isHOD && (
         <div style={cardStyle}>
-          <h6 style={{ color: navy, fontWeight: 700, marginBottom: 16 }}>Allocate a Course to a Lecturer</h6>
+          <h6 style={{ color: navy, fontWeight: 700, marginBottom: 16 }}>{editingId ? "Update Allocated Course" : "Allocate a Course to a Lecturer"}</h6>
           {message && <div className="alert alert-success py-2">{message}</div>}
           {lecturers.length === 0 ? (
             <div style={{ color: "#6c757d", fontSize: 14, padding: 16, background: "#f8fafc", borderRadius: 8, border: "1px solid #e2e8f0" }}>
@@ -84,9 +121,14 @@ export default function CourseAllocationPage() {
                   </select>
                 </div>
               </div>
-              <div style={{ marginTop: 16, textAlign: "right" }}>
+              <div style={{ marginTop: 16, display: "flex", justifyContent: "flex-end", gap: 10, flexWrap: "wrap" }}>
+                {editingId && (
+                  <button type="button" onClick={cancelEdit} style={{ background: "#e9ecef", color: "#212529", border: "none", padding: "10px 20px", borderRadius: 8, fontWeight: 600 }}>
+                    Cancel
+                  </button>
+                )}
                 <button type="submit" style={{ background: navy, color: "#fff", border: "none", padding: "10px 24px", borderRadius: 8, fontWeight: 600 }}>
-                  Allocate Course
+                  {editingId ? "Save Changes" : "Allocate Course"}
                 </button>
               </div>
             </form>
@@ -97,14 +139,26 @@ export default function CourseAllocationPage() {
       <div style={{ ...cardStyle, marginTop: 20 }}>
         <h6 style={{ color: navy, fontWeight: 700, marginBottom: 16 }}>{isHOD ? "All Department Allocations" : "My Allocated Courses"}</h6>
         <table className="table align-middle">
-          <thead><tr style={{ fontSize: 13.5, color: navy }}><th>Staff ID</th><th>Code</th><th>Title</th><th>Level</th><th>Unit</th><th>Semester</th><th>Session</th></tr></thead>
+          <thead><tr style={{ fontSize: 13.5, color: navy }}><th>Staff ID</th><th>Code</th><th>Title</th><th>Level</th><th>Unit</th><th>Semester</th><th>Session</th>{isHOD && <th>Actions</th>}</tr></thead>
           <tbody>
             {displayedAllocations.length === 0 ? (
-              <tr><td colSpan="7" style={{ textAlign: "center", color: "#adb5bd", padding: 24 }}>No course allocations recorded yet.</td></tr>
+              <tr><td colSpan={isHOD ? 8 : 7} style={{ textAlign: "center", color: "#adb5bd", padding: 24 }}>No course allocations recorded yet.</td></tr>
             ) : (
               displayedAllocations.map((a) => (
                 <tr key={a.id} style={{ fontSize: 14 }}>
                   <td>{a.staffId}</td><td style={{ fontWeight: 600, color: navy }}>{a.courseCode}</td><td>{a.courseTitle}</td><td>{a.level}</td><td>{a.creditUnit}</td><td>{a.semester}</td><td>{a.session}</td>
+                  {isHOD && (
+                    <td>
+                      <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+                        <button type="button" onClick={() => startEdit(a)} style={{ background: "#EAF1FB", color: navy, border: "none", padding: "6px 10px", borderRadius: 8, fontSize: 12, fontWeight: 700 }}>
+                          Edit
+                        </button>
+                        <button type="button" onClick={() => handleDelete(a.id)} style={{ background: "#FDECEC", color: "#b42318", border: "none", padding: "6px 10px", borderRadius: 8, fontSize: 12, fontWeight: 700 }}>
+                          Delete
+                        </button>
+                      </div>
+                    </td>
+                  )}
                 </tr>
               ))
             )}

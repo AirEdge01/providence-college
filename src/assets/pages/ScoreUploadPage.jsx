@@ -10,7 +10,7 @@ const gold = "#D4AF37";
 
 export default function ScoreUploadPage() {
     const staff = getCurrentStaff();
-    const allocations = getAllocationsForStaff(staff.id);
+    const allocations = getAllocationsForStaff(staff.staffId);
     const [selectedCourse, setSelectedCourse] = useState(allocations[0]?.courseCode || "");
     const [scores, setScores] = useState({});
     const [message, setMessage] = useState("");
@@ -25,7 +25,7 @@ export default function ScoreUploadPage() {
         : [];
 
     const existingSubmission = course
-        ? getExistingSubmission(staff.id, course.courseCode, course.session, course.semester)
+        ? getExistingSubmission(staff.staffId, course.courseCode, course.session, course.semester)
         : null;
     const isLocked = existingSubmission?.locked;
 
@@ -84,7 +84,7 @@ export default function ScoreUploadPage() {
 
         try {
             submitScores({
-                staffId: staff.id,
+                staffId: staff.staffId,
                 staffName: `${staff.firstName} ${staff.surname}`,
                 department: course.department,
                 courseCode: course.courseCode,

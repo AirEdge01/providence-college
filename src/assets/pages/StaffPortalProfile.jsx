@@ -1,5 +1,6 @@
 import React, { useState, useRef } from "react";
 import { getCurrentStaff, updateStaffPhoto } from "../utils/staffDB";
+import { sharedStyles } from "./LecturerDashboard";
 
 const navy = "#0F2C59";
 const gold = "#D4AF37";
@@ -32,27 +33,22 @@ export default function StaffPortalProfile() {
 
   return (
     <div>
-      <h4 style={{ color: navy, fontWeight: 700, marginBottom: 18 }}>My Profile</h4>
+      <style>{sharedStyles}</style>
+      <h4 style={{ color: navy, fontWeight: 700, marginBottom: 20, fontSize: "clamp(18px, 3vw, 22px)" }} className="dash-anim">My Profile</h4>
 
-      <div style={cardStyle}>
-        <div style={{ display: "flex", gap: 24, alignItems: "flex-start", flexWrap: "wrap" }}>
+      <div className="sp-card dash-anim" style={{ animationDelay: "0.05s" }}>
+        <div style={{ display: "flex", gap: 28, alignItems: "flex-start", flexWrap: "wrap" }}>
           <div style={{ textAlign: "center" }}>
             <img
               src={staff.photo || "https://via.placeholder.com/140"}
               alt={staff.fullName}
-              style={{ width: 140, height: 140, borderRadius: "50%", objectFit: "cover", border: `4px solid ${gold}`, display: "block", marginBottom: 12 }}
+              style={{ width: 140, height: 140, borderRadius: "50%", objectFit: "cover", border: `4px solid ${gold}`, display: "block", marginBottom: 14, boxShadow: "0 6px 18px rgba(15,44,89,0.18)" }}
             />
-            <input
-              type="file"
-              accept="image/*"
-              ref={fileRef}
-              style={{ display: "none" }}
-              onChange={handlePhotoChange}
-            />
+            <input type="file" accept="image/*" ref={fileRef} style={{ display: "none" }} onChange={handlePhotoChange} />
             <button
-              className="btn btn-sm btn-outline-primary"
               onClick={() => fileRef.current && fileRef.current.click()}
               disabled={uploading}
+              style={{ background: "#fff", border: `1px solid ${navy}`, color: navy, padding: "8px 18px", borderRadius: 10, fontWeight: 600, fontSize: 13, cursor: "pointer" }}
             >
               {uploading ? "Uploading..." : "Change Photo"}
             </button>
@@ -60,7 +56,7 @@ export default function StaffPortalProfile() {
 
           <div style={{ flex: 1, minWidth: 260 }}>
             <h5 style={{ color: navy, fontWeight: 700, marginBottom: 4 }}>{staff.fullName}</h5>
-            <p style={{ color: "#6c757d", fontSize: 14, marginBottom: 16 }}>{staff.title || staff.role}</p>
+            <p style={{ color: "#6c757d", fontSize: 14, marginBottom: 20 }}>{staff.title || staff.role}</p>
 
             <div className="row g-3">
               <InfoField label="Staff ID" value={staff.staffId} />
@@ -79,10 +75,8 @@ export default function StaffPortalProfile() {
 function InfoField({ label, value }) {
   return (
     <div className="col-md-6">
-      <div style={{ fontSize: 12.5, color: "#6c757d", marginBottom: 3 }}>{label}</div>
-      <div style={{ fontSize: 15, fontWeight: 600, color: "#212529" }}>{value || "Not set"}</div>
+      <div style={{ fontSize: 12, color: "#6c757d", marginBottom: 4, fontWeight: 600, textTransform: "uppercase", letterSpacing: 0.3 }}>{label}</div>
+      <div style={{ fontSize: 15, fontWeight: 600, color: "#212529", padding: "10px 14px", background: "#f8fafc", borderRadius: 10, border: "1px solid #eef1f6" }}>{value || "Not set"}</div>
     </div>
   );
 }
-
-const cardStyle = { background: "#fff", borderRadius: 14, padding: 24, boxShadow: "0 4px 14px rgba(15,44,89,0.06)" };
