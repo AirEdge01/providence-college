@@ -1,5 +1,5 @@
 import { upsertResult, getAllStudents as getAllStudentsFromLocalDB, updateStudent as updateStudentInLocalDB } from "./localDB";
-import staffRegistry, { findStaffByStaffId, getRegistryLecturersByDepartment } from "../data/staffRegistry";
+import { findStaffByStaffId, getRegistryLecturersByDepartment } from "../data/staffRegistry";
 
 const STAFF_KEY = "pice_staff";
 const STAFF_SESSION_KEY = "pice_staff_session";
@@ -63,6 +63,8 @@ export function staffSignup(data) {
     role: registryMatch.portalRole,
     title: registryMatch.role,
     department: registryMatch.department,
+    category: registryMatch.category,
+    photo: registryMatch.photo || "",
   };
 
   staff.push(newStaff);
@@ -96,10 +98,8 @@ export function getAllStaff() {
   return getAll(STAFF_KEY);
 }
 
-// Pulls from the official registry, not just already-registered accounts, so
-// HOD can allocate a course to a lecturer who hasn't signed up yet. The
-// moment that lecturer registers with that same Staff ID, the allocation
-// is already waiting for them since it's keyed by staffId.
+// Pulls from the official registry, not just signed-up accounts, so HOD can
+// allocate a course to a lecturer before that lecturer has even signed up.
 export function getLecturersInDepartment(department) {
   return getRegistryLecturersByDepartment(department).map((l) => {
     const { firstName, surname } = splitName(l.fullName);
@@ -198,6 +198,12 @@ export function getAllSubmissions() {
   return getAll(SUBMISSIONS_KEY);
 }
 
+// Kept for compatibility with any page that imports it; returns an empty
+// array unless something writes directly to this separate key.
+export function getSemesterInputsForHOD() {
+  return getAll("staff_semester_inputs");
+}
+
 export function confirmSubmission(id) {
   const submissions = getAll(SUBMISSIONS_KEY);
   const index = submissions.findIndex((s) => s.id === id);
@@ -283,7 +289,7 @@ export function publishAllPending() {
   return count;
 }
 
-// ---- Super Admin overrides ----
+// ---- Super Admin overrides (full access to everything) ----
 export function adminUpdateStaff(id, updates) {
   const staff = getAll(STAFF_KEY);
   const index = staff.findIndex((s) => s.id === id);
@@ -315,4 +321,13 @@ export function adminPublishSubmission(id) {
   return publishSubmission(id);
 }
 
-export { getAllStudentsFromLocalDB as getAllStudents, updateStudentInLocalDB as adminUpdateStudent, staffRegistry };
+export function updateStaffPhoto(staffId, dataUrl) {
+  const staff = getAll(STAFF_KEY);
+  const index = staff.findIndex((s) => s.id === staffId);
+  if (index === -1) throw new Error("Staff not found.");
+  staff[index] = { ...staff[index], photo: dataUrl };
+  saveAll(STAFF_KEY, staff);
+  return staff[index];
+}
+
+export { getAllStudentsFromLocalDB as getAllStudents, updateStudentInLocalDB as adminUpdateStudent };

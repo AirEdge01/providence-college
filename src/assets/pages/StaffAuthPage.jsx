@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate, useLocation, Link } from "react-router-dom";
-import { staffLogin, staffSignup } from "../utils/staffDB";
+import { staffLogin, staffSignup, staffLogout } from "../utils/staffDB";
 
 export default function StaffAuthPage() {
     const location = useLocation();
@@ -15,6 +15,7 @@ export default function StaffAuthPage() {
     const [signUpData, setSignUpData] = useState({ staffId: "", email: "", password: "", confirmPassword: "" });
 
     const [error, setError] = useState("");
+    const [success, setSuccess] = useState("");
     const [loading, setLoading] = useState(false);
 
     const handleSignIn = (e) => {
@@ -34,6 +35,7 @@ export default function StaffAuthPage() {
     const handleSignUp = (e) => {
         e.preventDefault();
         setError("");
+        setSuccess("");
         if (signUpData.password !== signUpData.confirmPassword) {
             setError("Passwords do not match.");
             return;
@@ -41,7 +43,13 @@ export default function StaffAuthPage() {
         setLoading(true);
         try {
             staffSignup(signUpData);
-            navigate("/staff-portal/dashboard");
+            // staffSignup logs the new account in automatically, so log back out
+            // here since we want the person to sign in deliberately, not land
+            // straight on the dashboard.
+            staffLogout();
+            setSuccess("Account created successfully. Please sign in with your new password.");
+            setSignUpData({ staffId: "", email: "", password: "", confirmPassword: "" });
+            setActiveTab("signin");
         } catch (err) {
             setError(err.message);
         } finally {
@@ -111,15 +119,16 @@ export default function StaffAuthPage() {
                         <div className={`glass-auth-card p-4 p-md-5 ${activeTab === "signin" ? "slide-in-left" : "slide-in-right"}`} key={activeTab}>
 
                             <div className="d-flex bg-dark bg-opacity-50 p-1 rounded-3 mb-4 border border-light border-opacity-10">
-                                <button type="button" className={`btn flex-fill fw-bold rounded-2 btn-sm py-2 glass-tab-btn ${activeTab === "signin" ? "active" : "inactive"}`} onClick={() => { setActiveTab("signin"); setError(""); }}>
+                                <button type="button" className={`btn flex-fill fw-bold rounded-2 btn-sm py-2 glass-tab-btn ${activeTab === "signin" ? "active" : "inactive"}`} onClick={() => { setActiveTab("signin"); setError(""); setSuccess(""); }}>
                                     <i className="bi bi-box-arrow-in-right me-2"></i>Staff Sign In
                                 </button>
-                                <button type="button" className={`btn flex-fill fw-bold rounded-2 btn-sm py-2 glass-tab-btn ${activeTab === "signup" ? "active" : "inactive"}`} onClick={() => { setActiveTab("signup"); setError(""); }}>
+                                <button type="button" className={`btn flex-fill fw-bold rounded-2 btn-sm py-2 glass-tab-btn ${activeTab === "signup" ? "active" : "inactive"}`} onClick={() => { setActiveTab("signup"); setError(""); setSuccess(""); }}>
                                     <i className="bi bi-person-plus me-2"></i>Register Account
                                 </button>
                             </div>
 
                             {error && <div className="alert alert-danger py-2 small">{error}</div>}
+                            {success && <div className="alert alert-success py-2 small">{success}</div>}
 
                             {activeTab === "signin" ? (
                                 <form onSubmit={handleSignIn} className="tab-content-anim">

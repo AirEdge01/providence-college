@@ -7,6 +7,7 @@ const gold = "#D4AF37";
 
 const ALL_NAV_ITEMS = [
   { label: "Dashboard", path: "/staff-portal/dashboard", icon: "bi-speedometer2", roles: [STAFF_ROLES.LECTURER, STAFF_ROLES.HOD, STAFF_ROLES.EXAMS_OFFICER, STAFF_ROLES.BURSARY] },
+  { label: "My Profile", path: "/staff-portal/profile", icon: "bi-person-circle", roles: [STAFF_ROLES.LECTURER, STAFF_ROLES.HOD, STAFF_ROLES.EXAMS_OFFICER, STAFF_ROLES.BURSARY] },
   { label: "Course Allocation", path: "/staff-portal/course-allocation", icon: "bi-journal-plus", roles: [STAFF_ROLES.HOD, STAFF_ROLES.LECTURER] },
   { label: "My Roster", path: "/staff-portal/roster", icon: "bi-people", roles: [STAFF_ROLES.LECTURER] },
   { label: "Score Upload", path: "/staff-portal/score-upload", icon: "bi-cloud-upload", roles: [STAFF_ROLES.LECTURER] },
@@ -24,9 +25,13 @@ export default function Sidebar({ staff, onLogout }) {
   return (
     <div style={{ background: navy, borderRadius: 14, padding: "20px 0", color: "#fff" }}>
       <div style={{ textAlign: "center", padding: "0 16px 18px", borderBottom: "1px solid rgba(255,255,255,0.15)" }}>
-        <div style={{ width: 54, height: 54, borderRadius: "50%", background: gold, margin: "0 auto 10px", display: "flex", alignItems: "center", justifyContent: "center", color: navy, fontWeight: 700 }}>
-          {staff?.firstName?.charAt(0) || "S"}{staff?.surname?.charAt(0) || ""}
-        </div>
+        {staff?.photo ? (
+          <img src={staff.photo} alt={staff.fullName} style={{ width: 54, height: 54, borderRadius: "50%", objectFit: "cover", margin: "0 auto 10px", display: "block", border: `2px solid ${gold}` }} />
+        ) : (
+          <div style={{ width: 54, height: 54, borderRadius: "50%", background: gold, margin: "0 auto 10px", display: "flex", alignItems: "center", justifyContent: "center", color: navy, fontWeight: 700 }}>
+            {staff?.firstName?.charAt(0) || "S"}{staff?.surname?.charAt(0) || ""}
+          </div>
+        )}
         <div style={{ fontWeight: 700, fontSize: 13.5 }}>{staff?.firstName} {staff?.surname}</div>
         <div style={{ fontSize: 11.5, opacity: 0.8 }}>{staff?.title || staff?.role}</div>
         {isSuperAdmin && <span className="badge" style={{ background: gold, color: navy, marginTop: 6, display: "inline-block" }}>Full Access</span>}

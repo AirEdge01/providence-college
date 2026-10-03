@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { getCurrentStaff, getPendingForHOD, getConfirmedForHOD, confirmSubmission, toggleResubmission, sendToExamOfficer, sendAllConfirmedToExamOfficer } from "../utils/staffDB";
+import { getCurrentStaff, getPendingForHOD, getConfirmedForHOD, confirmSubmission, toggleResubmission, sendToExamOfficer, sendAllConfirmedToExamOfficer, getSemesterInputsForHOD } from "../utils/staffDB";
 
 const navy = "#0F2C59";
 const gold = "#D4AF37";
@@ -12,11 +12,12 @@ export default function HodVettingQueuePage() {
 
     const pending = getPendingForHOD(staff.department);
     const confirmed = getConfirmedForHOD(staff.department);
+    const incomingSemesterInputs = getSemesterInputsForHOD(staff.department);
 
     const handleConfirm = (id) => { confirmSubmission(id); refresh(); };
     const handleToggle = (id, allow) => { toggleResubmission(id, allow); refresh(); };
     const handleSend = (id) => { sendToExamOfficer(id); refresh(); };
-
+    
     const handleSendAll = () => {
         const count = sendAllConfirmedToExamOfficer(staff.department);
         setMessage(`Sent ${count} collated result sheet(s) to the Exams Officer.`);
@@ -29,7 +30,42 @@ export default function HodVettingQueuePage() {
             <h4 style={{ color: navy, fontWeight: 700, marginBottom: 18 }}>HOD Vetting Queue</h4>
             {message && <div className="alert alert-success py-2">{message}</div>}
 
-            <h6 style={{ color: navy, fontWeight: 700, marginBottom: 12 }}>Pending Your Confirmation</h6>
+            {/* SECTION: Direct Lecturer Submissions */}
+            <h6 style={{ color: navy, fontWeight: 700, marginBottom: 12 }}>Received Lecturer Semester Submissions</h6>
+            {incomingSemesterInputs.length === 0 ? (
+                <div style={cardStyle}><div style={{ textAlign: "center", padding: "20px 0", color: "#adb5bd" }}>No semester student inputs received from lecturers.</div></div>
+            ) : (
+                incomingSemesterInputs.map((input) => (
+                    <div key={input.id} style={{ ...cardStyle, marginBottom: 16 }}>
+                        <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 12 }}>
+                            <h6 style={{ color: navy, fontWeight: 700 }}>Course: {input.courseCode} ({input.semester} - {input.session})</h6>
+                            <span style={{ fontSize: 13, color: "#6c757d" }}>Submitted by: <strong>{input.lecturerName}</strong></span>
+                        </div>
+                        <table className="table table-sm align-middle mb-2">
+                            <thead>
+                                <tr style={{ fontSize: 13 }}>
+                                    <th>Matric Number</th>
+                                    <th>Level</th>
+                                    <th>CA</th>
+                                    <th>Exam</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {input.students?.map((st, i) => (
+                                    <tr key={i} style={{ fontSize: 13 }}>
+                                        <td>{st.matricNumber}</td>
+                                        <td>{st.level}</td>
+                                        <td>{st.ca}</td>
+                                        <td>{st.exam}</td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                    </div>
+                ))
+            )}
+
+            <h6 style={{ color: navy, fontWeight: 700, margin: "24px 0 12px" }}>Pending Your Confirmation</h6>
             {pending.length === 0 ? (
                 <div style={cardStyle}><div style={{ textAlign: "center", padding: "20px 0", color: "#adb5bd" }}>Nothing pending your confirmation.</div></div>
             ) : (
@@ -55,6 +91,7 @@ export default function HodVettingQueuePage() {
                     </button>
                 )}
             </div>
+
             {confirmed.length === 0 ? (
                 <div style={cardStyle}><div style={{ textAlign: "center", padding: "20px 0", color: "#adb5bd" }}>No confirmed results waiting to be sent.</div></div>
             ) : (
